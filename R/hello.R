@@ -17,6 +17,4 @@ hello <- function() {
   print("Hello, world!")
 }
 
-hello2 <- fuction() {
-  print("Hello, planet!")
-}
+
