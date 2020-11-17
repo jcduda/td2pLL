@@ -1,11 +1,28 @@
 Package: td2pLL
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Fitting a time-dose two-parameter log-logistic model to
+    time-dose-response data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Julia Duda
+Maintainer: Julia Duda <duda@statistik.tu-dortmund.de>
+Description: This package offers functions to fit and plot a time-dose 
+    two-parameter log-logistic (td2pLL) model to time-dose-response data with
+    a special aim for cytotoxicity data. The model is an extended model of the
+    famous two-parameter log-logistic (2pLL) model for dose-response data. The
+    time component is integrated into the model via Haber's law. The 
+    anova-td2pLL pipeline, where a pre-test for detecting possible influence
+    of the (exposure) time on the dose-response curve is performed to
+    conditionally calculate the td2pLL or a 2pLL model, is integrated, too.
+    The package also helps with calculting and visualizing optimal experimental
+    designs for (exposure) time-response experiments. See the work of Duda and
+    Rahnenführer (2021) for details.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    DoseFinding (>= 0.9.17),
+    dplyr (>= 1.0.2),
+    drc (>= 3.0.1),
+    plotly (>= 4.9.2.1),
+    tidyr (>= 1.1.2)
+RoxygenNote: 7.1.1

@@ -21,31 +21,38 @@ ext3pLL <- function(dose, expo, h, gamma, c0, delta){
 
 
 ################
-# FITTING 
+# FITTING
 ################
 
 
 # function: interp_ED50
-#   used for starting parameter calculation in function get_starting_values
-#   Input:
-#     - data: data.frame with columns dose (numeric) and mean_resp (numeric) of response data
-#   Output:
-#     - ED50_intern: Initial guess for ED50 value via linear interpolation. Assumes downward trend.
-interp_ED50 <- function(data){
+#' @title Starting value calculation for ED50 parameter
+#' @description Calculates cheap starting parameter for the ED50 parameter of a
+#'  2pLL model by interpolation. This function is used in get_starting_values.
+#' @param  data A data.frame with columns dose (numeric) and mean_resp (numeric)
+#'  of mean response data at given dose level.
+#' @details The function assumes that the mean response values lay within 0 and
+#'  100, i.e. have percent units.
+#'  It also assumes a downward trend of the ED50 with dose.
+#'  If the lowest mean_resp value is already above 50, the function
+#'  returns the maximal dose.
+#' @return Returns the numeric \code{ED50_interp}.
+interp_ED50 <- function(data=NULL){
   if(min(data$mean_resp) > 50) {
     ED50_interp <- max(data$dose)
   } else {
     # dose-ids just above 50 and then below 50
-    id_bef_after <- which.min(data$mean_resp > 50) -c(1, 0)
+    id_bef_after <- which.min(data$mean_resp > 50) - c(1, 0)
     dose_bef_after <- data$dose[id_bef_after]
     resp_bef_after <- data$mean_resp[id_bef_after]
-    
+
     # intercept
-    b <- (resp_bef_after[2] - resp_bef_after[1] * dose_bef_after[2]/dose_bef_after[1]) /
+    b <- (resp_bef_after[2] - resp_bef_after[1] *
+            dose_bef_after[2]/dose_bef_after[1]) /
       (1 - dose_bef_after[2] / dose_bef_after[1])
     # slope
     m <- (resp_bef_after[2] - b) / dose_bef_after[2]
-    
+
     ED50_interp <- (50-b)/m
   }
   return(ED50_interp)
@@ -53,9 +60,9 @@ interp_ED50 <- function(data){
 
 
 
-# function: get_starting_values 
+# function: get_starting_values
 #   calcultaes default starting values for exposure dose response data when ext3pLL model is fitted.
-#   
+#
 # Input:
 #     - data:     data.frame(numerical) with columns expo, dose, resp
 #     - h_start:  Starting value used for h in ext3pLL model. Default is 2.
@@ -69,24 +76,24 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
   data_low_exp_mean <- data %>% filter(expo == min(expo)) %>%
     group_by(dose) %>%
     summarize(mean_resp = mean(resp), .groups = "drop")
-  
+
   data_high_exp_mean <- data %>% filter(expo == max(expo)) %>%
     group_by(dose) %>%
     summarize(mean_resp = mean(resp), .groups = "drop") %>%
     ungroup()
-  
+
   ED50_start_low_exp <- interp_ED50(data = data_low_exp_mean)
   ED50_start_high_exp <- interp_ED50(data = data_high_exp_mean)
-  
-  
+
+
   expo_low_high <- range(data$expo)
-  
+
   # get starting values for delta and gamma:
   gamma_start <- log(ED50_start_low_exp / ED50_start_high_exp, base = expo_low_high[1]*expo_low_high[2])
   delta_start <- mean(c(ED50_start_low_exp / expo_low_high[1]^(gamma_start),
                         ED50_start_high_exp / expo_low_high[2]^(gamma_start)))
-  c0_start <- c0_start 
-  
+  c0_start <- c0_start
+
   return(list(h = h_start,
               delta = delta_start,
               gamma = gamma_start,
@@ -98,7 +105,7 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 
 # function: fitDERmod (fit Dose-Exposure-Response-Model)
 #   Fits the extended 3pLL model to the data and returns a object using
-#   the port algorithm in the nls function. 
+#   the port algorithm in the nls function.
 #   The bject has the specific class DERmod and general class nls.
 # Input:
 #   - data:     data.frame (numeric) with columns expo, dose and resp
@@ -109,7 +116,7 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 #               maxiter = 100 and warnOnly = TRUE is used instead of default
 #               maxiter = 50 and warnOnly = FALSE.
 #   - lower:    named list or numeric of lower boundaries for parameters for
-#               h, delta, gamma and c0 (in this order). For default (NULL), 
+#               h, delta, gamma and c0 (in this order). For default (NULL),
 #               1, -3*max(dose), -10 and 0 is used.
 #   - upper:    Named list or numeric of upper boundaries for parameters for
 #               h, delta, gamma and c0 (in this order). For default (NULL),
@@ -121,58 +128,58 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 
 
 fitDERmod <- function(data, start = NULL, control = NULL, lower = NULL, upper = NULL, trace = FALSE){
-  
+
   if(!(all(colnames(data) %in% c("expo", "dose", "resp")))){
     stop("Argument data must be data.frame with columns expo, dose, resp.")
   }
 
-  
+
   doses <- unique(data$dose)
-  
-  
+
+
   if(is.null(start)){
     start <- get_starting_values(data)
   } else {
     if((length(start) != 4) | !is.numeric(start)) stop("Argument start must be numeric of length 4.")
   }
-  
+
   if(is.null(control)){
     control <- list(maxiter = 100, warnOnly = TRUE, printEval = FALSE)
-  } 
-  
+  }
+
   if(is.null(lower)){
     lower <- c(h = 1, delta = -3*max(doses), gamma = -10, c0 = 0)
   } else {
     if((length(lower) != 4) |  !is.numeric(lower)) stop("Argument lower must be numeric of length 4.")
   }
-  
+
   if(is.null(upper)){
     upper <- c(h = 10, delta = max(doses)*3, gamma = 10, c0 = max(doses)*3)
   } else {
     if((length(upper) != 4) |  !is.numeric(upper)) stop("Argument upper must be numeric of length 4.")
   }
-  
+
   if(is.null(trace)){
     trace <- FALSE
   }
   # approach using means and weights
-  data_w <- 
+  data_w <-
     data %>% group_by(expo, dose) %>%
     summarize(n = n(),
            resp_m = mean(resp)
     ) %>%
       ungroup()
-  
+
   # original. unweighted
   # fit <- nls(resp ~ 100 - 100*(dose^h) / ( ( delta * expo^(-gamma) + c0)^h + dose^h),
   #            data = data,
   #            algorithm = "port",
   #            lower = lower,
   #            upper = upper,
-  #            start = start, trace = trace, 
+  #            start = start, trace = trace,
   #            control = control
   # )
-  
+
   # new: weighted (hopefully more robust)
   fit <- nls(resp_m ~ 100 - 100*(dose^h) / ( ( delta * expo^(-gamma) + c0)^h + dose^h),
               data = data_w,
@@ -181,14 +188,14 @@ fitDERmod <- function(data, start = NULL, control = NULL, lower = NULL, upper = 
               lower = lower,
               upper = upper,
               start = start,
-             trace = trace, 
+             trace = trace,
               control = control
   )
-  
+
   attr(fit, "class") <- c("DERmod", "nls") # to use plot.DERmod as method
-  
+
   return(fit)
-  
+
 }
 
 # function: fitJointmod
@@ -230,7 +237,7 @@ fitJointmod <- function(data){
 #
 # Details:
 # First, the method BFGS (default) is used. It his throws an error, the Nelder-Mead
-# method is used. Both the hilld parameter h and the ec50 are seperate for each exposure time. 
+# method is used. Both the hilld parameter h and the ec50 are seperate for each exposure time.
 # Note: We DO NO MORE use the LL2.2 function which uses log(EC50) as parameter for enhanced
 # stability. When we want to get the true EC50s value of each, seperate curve,
 # in case of LL2.2 we have to back-transform via exp("e:(Intercept)" + "e:expo2"), to get the
@@ -286,18 +293,18 @@ fitSepmod <- function(data){
 
 plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo_lim = c(1,7),
                         add_data = NULL, n_grid = 100, title = NULL, add_ED50_line = T){
-  
+
   expo_seq = seq(expo_lim[1], expo_lim[2], length.out = n_grid)
   dose_seq = c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)
-  
+
   input_grid <- expand.grid(expo = expo_seq, dose = dose_seq) %>%
     as.data.frame()
-  
+
   if(is.null(DERmod) & is.null(coefs)) stop("Either the DERmod argument or the coefs argument must be specified.")
   if(!(is.null(DERmod)) & !(is.null(coefs))) stop("Only DERmod or coefs can be specified.")
-  
-  # calculate the responses at each grid-point 
+
+  # calculate the responses at each grid-point
   if(!is.null(coefs)){
     input_grid$resp <- apply(input_grid, 1, function(x){
       ext3pLL(dose = x["dose"],
@@ -312,34 +319,34 @@ plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo
     input_grid$resp <- predict(DERmod, newdata = input_grid)
     coefs <- coef(DERmod)
   }
-  
+
   # make matrix-style input for plot_ly function
   input_grid <- input_grid %>% pivot_wider(names_from = dose, values_from = resp) %>%
     dplyr::select(-expo) %>%
     as.matrix()
-  
+
   if(is.null(title)){
     title <- paste0("h = ", round(coefs["h"], 3) ,"; delta = ", round(coefs["delta"], 3) ,";\n gamma = ",
                     round(coefs["gamma"],3) ,"; c0 = ", round(coefs["c0"], 3))
   }
-  
+
   res_plot <- plot_ly(x = dose_seq, y = expo_seq, z = input_grid,
-                      type="surface") %>% 
-    layout(title = title, 
+                      type="surface") %>%
+    layout(title = title,
            scene = list(
              xaxis = list(title = "Dose",
                           tick0 = 0,
                           type = "log"),
              yaxis = list(title = "Exposure Time"),
              zaxis = list(title = "Response")
-           )) 
-  
-  # add single data points, if available  
+           ))
+
+  # add single data points, if available
   if(!is.null(add_data)){
     res_plot <- res_plot %>% add_markers(x = add_data$dose, y = add_data$expo, z = add_data$resp,
-                                         marker = list(size = 2), showlegend = F) 
+                                         marker = list(size = 2), showlegend = F)
   }
-  
+
   # add ED50 line, if wanted
   if(add_ED50_line){
     add_ED50 <- data.frame(
@@ -356,13 +363,13 @@ plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo
               c0 = coefs["c0"])
     }
     )
-    
+
     res_plot <- res_plot %>% add_trace(x = add_ED50$ED50, y = add_ED50$expo, z = add_ED50$resp,
                                        type = "scatter3d", mode = "lines",
                                        showlegend = F,
                                        line = list(color = "red", width = 6))
   }
-  
+
   return(res_plot)
 }
 
@@ -370,7 +377,7 @@ plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo
 
 
 # function: plot_designs
-#           plots the considered experimental designs as a ggplot. 
+#           plots the considered experimental designs as a ggplot.
 #
 # Input:
 # - designs:  data.frame with columns expo, dose, n and design
@@ -407,7 +414,7 @@ my_pseudo_log <- function(x) asinh(x/(2 * 0.0001))/log(sqrt(10))
 
 
 #######################
-# Data generation 
+# Data generation
 #######################
 
 
@@ -428,7 +435,7 @@ my_pseudo_log <- function(x) asinh(x/(2 * 0.0001))/log(sqrt(10))
 generate_data <- function(model, noise_id, expDes){
   # grid for expo, dose, n, h, delta, gamma, c0
   inputs <- cbind.data.frame(expDes %>% dplyr::select(-design), t(as.data.frame(model)) %>% `rownames<-`(NULL))
-  
+
   # calculate mean_resp (true mean) at each expo dose point
   inputs$mean_resp <- apply(inputs, 1, function(x){
     ext3pLL(dose = x["dose"],
@@ -437,69 +444,69 @@ generate_data <- function(model, noise_id, expDes){
             gamma = x["gamma"],
             c0 = x["c0"],
             delta = x["delta"])
-  } 
+  }
   )
-  
+
   # Calculate noise sd first
   inputs$noise_sd <- predict(lm_sd_noise, newdata = inputs[, c("expo", "dose")] %>% dplyr::mutate(dose = my_pseudo_log(dose)))
-  
+
   # check via noise parameter, if sd will be halfed (N1)
-  
+
   stopifnot(noise_id %in% c("N1", "N2", "N3"))
-  
+
   if(noise_id == "N1"){
     inputs$noise_sd <- inputs$noise_sd * 0.5
   }
-  
+
   if(noise_id == "N3"){
-    inputs$noise_sd <- inputs$noise_sd * 1.5 
+    inputs$noise_sd <- inputs$noise_sd * 1.5
   }
-  
+
   # if noise_id == "N2": Do nothing, this is the baseline noise sd.
-  
-  
+
+
   # generate random noise values
   help_add_noise <- apply(inputs[, c("expo", "dose", "n", "noise_sd")], 1, function(x){
     suppressWarnings(
       cbind.data.frame(expo = x["expo"], dose = x["dose"], noise_value = rnorm(n = x["n"], sd = x["noise_sd"]))
     )
   }) %>% do.call(rbind.data.frame, .)
-  
+
   # put together
   res_pre <- left_join(inputs, help_add_noise, by = c("expo", "dose")) %>%
     dplyr::mutate(resp = mean_resp + noise_value) %>%
     dplyr::select(expo, dose, resp)
-  
+
   # apply regular pre-processing
-  
+
   # First, divide by mean response at dose 0
-  
+
   mean_resp_0 <- res_pre %>% dplyr::filter(dose == 0) %>% dplyr::select(resp) %>% unlist %>% mean
   res_pre <- dplyr::mutate(res_pre, resp = (resp / mean_resp_0) * 100 )
-  
+
   # refit procedure: seperately fit 4pLL dose-response curves at each exposure.
   # Divide by resulting left (upper) asymptote
   all_expos <- unique(res_pre$expo)
-  
+
   # get left asymptote (e0) or ach exposure time
   help_left_asymp <- sapply(all_expos, function(curr_expo){
     c(expo = curr_expo,
       fitMod(dose, resp,
              data = res_pre %>% dplyr::filter(expo == curr_expo) %>% dplyr::select(dose, resp),
              model = "sigEmax") %>%
-        coef() %>% 
+        coef() %>%
         .["e0"]
     )
   }) %>% t() %>% as.data.frame()
-  
+
   # divide by left asymptote stratified by exposure time
   res <- left_join(res_pre, help_left_asymp, by = "expo") %>%
     dplyr::mutate(resp = (resp / e0) * 100) %>%
     dplyr::select(expo, dose, resp)
-  
-  
+
+
   return(res)
-  
+
 }
 
 ##############################
@@ -519,10 +526,10 @@ generate_data <- function(model, noise_id, expDes){
 # Input:
 # - data:   data.frame with columns expo, dose, resp containing the data
 # - alpha:  numeric in (0,1) representing the significance level. Default is 0.05.
-# 
+#
 # Output:
 # - vector with two elements: p_value (numeric in (0,1)) and signif (logical). If signif = TRUE,
-#           we reject the likelihood ratio null-hypothesis of EC50 being a common parameter. 
+#           we reject the likelihood ratio null-hypothesis of EC50 being a common parameter.
 #           Hence, if we reject, we will model the ext3pLL model, otherwise, we pool the data into
 #           one dose-response curve (we ignrore the expo values).
 #
@@ -538,10 +545,10 @@ generate_data <- function(model, noise_id, expDes){
 #          seems to generate highly varying EC50 estimates
 
 ext3pLL_anova_check <- function(data, alpha = 0.05){
-  
+
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("expo", "dose", "resp"))))
-  
+
   # dose-response curve with seperate EC50 parameters: Try default method BFGS first, then Nelder-Mead
   drm_seperate <- tryCatch(
     {
@@ -562,16 +569,16 @@ ext3pLL_anova_check <- function(data, alpha = 0.05){
                          ~expo)) # EC50
       )
     }
-  ) 
-  
+  )
+
   # dose-response curves with shared EC50 parameters: Try default method BFGS first, then Nelder-Mead
   drm_joint <- fitJointmod(data = data)
-  
-  
+
+
   anova_res <- anova(drm_joint, drm_seperate)
   p_value <- anova_res$`p value`[2]
   signif <- ifelse(p_value < 0.05, TRUE, FALSE)
-  
+
   return(c(p_value = p_value, signif = signif))
 }
 
@@ -587,15 +594,15 @@ ext3pLL_anova_check <- function(data, alpha = 0.05){
 # res:     data.frame with columns expo and EC50 containing the result
 
 get_EC50s <- function(coefs, expos){
-  
+
   stopifnot(length(setdiff(names(coefs), c("h", "delta", "gamma", "c0"))) == 0)
   stopifnot(is.numeric(expos) & length(expos) >= 1)
   stopifnot(all(expos >= 1 & expos <= 7))
-  
+
   EC50s <- sapply(expos, function(expo) coefs["delta"] * expo^(-coefs["gamma"]) + coefs["c0"])
-  
+
   res <- data.frame(expo = expos, EC50 = EC50s)
-  
+
   return(res)
 }
 
