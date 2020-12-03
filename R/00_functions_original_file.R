@@ -10,262 +10,54 @@ library(scales)
 library(drc)
 
 
-# function: ext4pLL
-#           calculates value of extended 4pLL model for parameters dose, time, h, gamma, c0 and delta
-ext3pLL <- function(dose, expo, h, gamma, c0, delta){
-  EC50 <- delta * expo^(-gamma) + c0
-  resp <- 100 - 100 * (dose^h) / (EC50^h + dose^h)
-  return(resp = resp)
-}
+# fitting functions are now on ./R/01_fitting.R
 
-
-
-################
-# FITTING
-################
-
-
-# function: interp_ED50
-#' @title Starting value calculation for ED50 parameter
-#' @description Calculates cheap starting parameter for the ED50 parameter of a
-#'  2pLL model by interpolation. This function is used in get_starting_values.
-#' @param  data A data.frame with columns dose (numeric) and mean_resp (numeric)
-#'  of mean response data at given dose level.
-#' @details The function assumes that the mean response values lay within 0 and
-#'  100, i.e. have percent units.
-#'  It also assumes a downward trend of the ED50 with dose.
-#'  If the lowest mean_resp value is already above 50, the function
-#'  returns the maximal dose.
-#' @return Returns the numeric \code{ED50_interp}.
-interp_ED50 <- function(data=NULL){
-  if(min(data$mean_resp) > 50) {
-    ED50_interp <- max(data$dose)
-  } else {
-    # dose-ids just above 50 and then below 50
-    id_bef_after <- which.min(data$mean_resp > 50) - c(1, 0)
-    dose_bef_after <- data$dose[id_bef_after]
-    resp_bef_after <- data$mean_resp[id_bef_after]
-
-    # intercept
-    b <- (resp_bef_after[2] - resp_bef_after[1] *
-            dose_bef_after[2]/dose_bef_after[1]) /
-      (1 - dose_bef_after[2] / dose_bef_after[1])
-    # slope
-    m <- (resp_bef_after[2] - b) / dose_bef_after[2]
-
-    ED50_interp <- (50-b)/m
-  }
-  return(ED50_interp)
-}
-
-
-
-# function: get_starting_values
-#   calcultaes default starting values for exposure dose response data when ext3pLL model is fitted.
+# # function: fit_sep_mod
+# #           Fits seperate 2pLL model (upper limit = 100, lower limit = 0) to
+# #           dose response data
+# # Input:
+# # - data: data.frame containing numeric columns resp and dose and time
+# #
+# # Output:
+# # drc-object containing the model
+# #
+# # Details:
+# # First, the method BFGS (default) is used. It his throws an error, the Nelder-Mead
+# # method is used. Both the hilld parameter h and the ec50 are seperate for each exposure time.
+# # Note: We DO NO MORE use the LL2.2 function which uses log(EC50) as parameter for enhanced
+# # stability. When we want to get the true EC50s value of each, seperate curve,
+# # in case of LL2.2 we have to back-transform via exp("e:(Intercept)" + "e:expo2"), to get the
+# # EC50 of the second curve, for example.
+# #
+# # Note: This function is not included in the td2pLL package, as it is tailored
+# # to the simulation study of duda et al. (2021).
 #
-# Input:
-#     - data:     data.frame(numerical) with columns expo, dose, resp
-#     - h_start:  Starting value used for h in ext3pLL model. Default is 2.
-#     - c0_start: Starting value used for threshold c0 in ext3pLL mpdel. Default is 0.
 #
-# Output:
-#     - list with starting values for h, delta, gamma and c0
-get_starting_values <- function(data, h_start = 2, c0_start = 0){
-  # for starting value of "delta" consider ED50 estimate at lowest exposure time
-  # idea: with linear interpolation: get two pairs (expo, ED50) and then starting values for gamma and delta
-  data_low_exp_mean <- data %>% filter(expo == min(expo)) %>%
-    group_by(dose) %>%
-    summarize(mean_resp = mean(resp), .groups = "drop")
-
-  data_high_exp_mean <- data %>% filter(expo == max(expo)) %>%
-    group_by(dose) %>%
-    summarize(mean_resp = mean(resp), .groups = "drop") %>%
-    ungroup()
-
-  ED50_start_low_exp <- interp_ED50(data = data_low_exp_mean)
-  ED50_start_high_exp <- interp_ED50(data = data_high_exp_mean)
-
-
-  expo_low_high <- range(data$expo)
-
-  # get starting values for delta and gamma:
-  gamma_start <- log(ED50_start_low_exp / ED50_start_high_exp, base = expo_low_high[1]*expo_low_high[2])
-  delta_start <- mean(c(ED50_start_low_exp / expo_low_high[1]^(gamma_start),
-                        ED50_start_high_exp / expo_low_high[2]^(gamma_start)))
-  c0_start <- c0_start
-
-  return(list(h = h_start,
-              delta = delta_start,
-              gamma = gamma_start,
-              c0 = c0_start)
-  )
-}
+# fit_sep_2pLL <- function(data){
+#   tryCatch(
+#     {
+#       drm(resp ~ dose,
+#           curveid = time,
+#           data = data %>% dplyr::mutate(time = factor(time)),
+#           fct = LL.2(upper = 100),
+#           pmodels = list(~time, # h
+#                          ~time) # EC50
+#       )
+#     },
+#     error = function(cond){
+#       drm(resp ~ dose,
+#           curveid = time,
+#           control = drmc(method = "Nelder-Mead"),
+#           data = data %>% dplyr::mutate(time = factor(time)),
+#           fct = LL.2(upper = 100),
+#           pmodels = list(~time, # h
+#                          ~time) # EC50
+#       )
+#     }
+#   )
+# }
 
 
-
-# function: fitDERmod (fit Dose-Exposure-Response-Model)
-#   Fits the extended 3pLL model to the data and returns a object using
-#   the port algorithm in the nls function.
-#   The bject has the specific class DERmod and general class nls.
-# Input:
-#   - data:     data.frame (numeric) with columns expo, dose and resp
-#   - start:    list with named (numeric) starting values for h, delta, gamma and c0.
-#               When the default (NULL) is used, h=2 and c0=0 are used and for
-#               delta and gamma a linear interpolation procedure is used.
-#   - control:  List of control arguments for nls function. For default (NULL),
-#               maxiter = 100 and warnOnly = TRUE is used instead of default
-#               maxiter = 50 and warnOnly = FALSE.
-#   - lower:    named list or numeric of lower boundaries for parameters for
-#               h, delta, gamma and c0 (in this order). For default (NULL),
-#               1, -3*max(dose), -10 and 0 is used.
-#   - upper:    Named list or numeric of upper boundaries for parameters for
-#               h, delta, gamma and c0 (in this order). For default (NULL),
-#               10, max(dose)*3, 10 and max(dose)*3 is used.
-#   - trace:    trace argument for nls function. Default is FALSE.
-#
-# Output:
-#   - fit:  an nls object of the fitted extended 3pLL model
-
-
-fitDERmod <- function(data, start = NULL, control = NULL, lower = NULL, upper = NULL, trace = FALSE){
-
-  if(!(all(colnames(data) %in% c("expo", "dose", "resp")))){
-    stop("Argument data must be data.frame with columns expo, dose, resp.")
-  }
-
-
-  doses <- unique(data$dose)
-
-
-  if(is.null(start)){
-    start <- get_starting_values(data)
-  } else {
-    if((length(start) != 4) | !is.numeric(start)) stop("Argument start must be numeric of length 4.")
-  }
-
-  if(is.null(control)){
-    control <- list(maxiter = 100, warnOnly = TRUE, printEval = FALSE)
-  }
-
-  if(is.null(lower)){
-    lower <- c(h = 1, delta = -3*max(doses), gamma = -10, c0 = 0)
-  } else {
-    if((length(lower) != 4) |  !is.numeric(lower)) stop("Argument lower must be numeric of length 4.")
-  }
-
-  if(is.null(upper)){
-    upper <- c(h = 10, delta = max(doses)*3, gamma = 10, c0 = max(doses)*3)
-  } else {
-    if((length(upper) != 4) |  !is.numeric(upper)) stop("Argument upper must be numeric of length 4.")
-  }
-
-  if(is.null(trace)){
-    trace <- FALSE
-  }
-  # approach using means and weights
-  data_w <-
-    data %>% group_by(expo, dose) %>%
-    summarize(n = n(),
-           resp_m = mean(resp)
-    ) %>%
-      ungroup()
-
-  # original. unweighted
-  # fit <- nls(resp ~ 100 - 100*(dose^h) / ( ( delta * expo^(-gamma) + c0)^h + dose^h),
-  #            data = data,
-  #            algorithm = "port",
-  #            lower = lower,
-  #            upper = upper,
-  #            start = start, trace = trace,
-  #            control = control
-  # )
-
-  # new: weighted (hopefully more robust)
-  fit <- nls(resp_m ~ 100 - 100*(dose^h) / ( ( delta * expo^(-gamma) + c0)^h + dose^h),
-              data = data_w,
-              weights = data_w$n,
-              algorithm = "port",
-              lower = lower,
-              upper = upper,
-              start = start,
-             trace = trace,
-              control = control
-  )
-
-  attr(fit, "class") <- c("DERmod", "nls") # to use plot.DERmod as method
-
-  return(fit)
-
-}
-
-# function: fitJointmod
-#           Fits a 2pLL model (upper limit = 100, lower limit = 0) to dose response data
-# Input:
-# - data: data.frame containing numeric columns resp and dose
-#
-# Output:
-# drc-object containing the model
-#
-# Details:
-# First, the method BFGS (default) is used. It his throws an error, the Nelder-Mead
-# method is used.
-# Note:
-# We use the LL2.2 function. That means that the logEC50 parameterization is
-# used.
-
-fitJointmod <- function(data){
-  tryCatch(
-    {
-      drm(resp ~ dose,
-          data = data, fct = LL2.2(upper = 100))
-    },
-    error = function(cond){
-      return(drm(resp ~ dose,
-                 data = data, fct = LL2.2(upper = 100),
-                 control = drmc(method = "Nelder-Mead")))
-    }
-  )
-}
-
-# function: fitSepmod
-#           Fits seperate 2pLL model (upper limit = 100, lower limit = 0) to dose response data
-# Input:
-# - data: data.frame containing numeric columns resp and dose and expo
-#
-# Output:
-# drc-object containing the model
-#
-# Details:
-# First, the method BFGS (default) is used. It his throws an error, the Nelder-Mead
-# method is used. Both the hilld parameter h and the ec50 are seperate for each exposure time.
-# Note: We DO NO MORE use the LL2.2 function which uses log(EC50) as parameter for enhanced
-# stability. When we want to get the true EC50s value of each, seperate curve,
-# in case of LL2.2 we have to back-transform via exp("e:(Intercept)" + "e:expo2"), to get the
-# EC50 of the second curve, for example.
-
-fitSepmod <- function(data){
-  tryCatch(
-    {
-      drm(resp ~ dose,
-          curveid = expo,
-          data = data %>% dplyr::mutate(expo = factor(expo)),
-          fct = LL.2(upper = 100),
-          pmodels = list(~expo, # h
-                         ~expo) # EC50
-      )
-    },
-    error = function(cond){
-      drm(resp ~ dose,
-          curveid = expo,
-          control = drmc(method = "Nelder-Mead"),
-          data = data %>% dplyr::mutate(expo = factor(expo)),
-          fct = LL.2(upper = 100),
-          pmodels = list(~expo, # h
-                         ~expo) # EC50
-      )
-    }
-  )
-}
 
 ##############
 # PLOTTING
