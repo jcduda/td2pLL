@@ -12,8 +12,14 @@ https://plotly.com/r/reference/#Layout_and_layout_style_objects
 			Sets the axis type. By default, plotly attempts to determined the axis type
 			by looking into the data of the traces that referenced the axis in question.
 
-# Ask Jakob: FIguring out al the "no visible global function definition" in the "check()" output
+# Ask Jakob: Figuring out all the "no visible global function definition" in the "check()" output
 
-# ALWAYS add dplyr::mutate() and so on
+# ALWAYS add dplyr::mutate() and so forth
 
 # get_EC50s function from .R/00_functions_original_file.R not properly added yet
+
+# add plotting function for a TDR (time-dose-response anova pipeline)
+	- Distinguish between the cases td2pLL, 2pLL and no model (non-convergence)
+
+# Setup branch to improve optimization: Implement grid-search and recalculate good
+# parameter ranges without helper assumption min(time) = 1
