@@ -23,17 +23,52 @@
 #'
 #' @description \code{plot.td2pLL} is the plot method for the S3 class
 #' \code{td2pLL}.
-#'  Model fits generated with the fit_td2pLL functions are of class
-#'  \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
-#'  If no fitted model but a through parameters pre-specified td2pLL model
-#'  shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
-#'  For details on the \code{td2pLL} model, see \code{\link{fit_td2pLL}}.
+#' Model fits generated with the fit_td2pLL functions are of class
+#' \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
+#' If no fitted model but a through parameters pre-specified td2pLL model
+#' shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
+#' For details on the \code{td2pLL} model, see \code{\link{fit_td2pLL}}.
+#' If the \code{TDR} function is used which performs the two-step
+#' modeling pipeline, one can apply plot.td2pLL to the \code{fit} list entry
+#' returned by TDR, if fitting a \code{td2pLL} model was chosen in accordance
+#' to the anova pre-test.
+#' @details For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
+#' For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
+#' the entire procedure is explained in duda et al. (2021).
+#' For plotting, the \code{plot_ly} function of package \code{plotly} is used.
+#' @param td2pLL_model A td2pLL object generatet via \code{fit_td2pLL}. If not
+#' provided, alternatively, \code{td2pLL_coefs} can be provided.
+#' @param td2pLL_coefs Named numeric vector with parameters for h, delta, gamma and c0
+#' of the td2pLL model.
+#' @param dose_lim Boundaries of the doses (xaxis) to be plotted. Default is
+#' \code{c(1e-4, 1)}.
+#' Note: If \code{xaxis_scale = "log"} (default), then \code{dose_lim} cannot include 0.
+#' If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.
+#' @param time_lim Boundaries for the time (xaxis). Default is \code{c(1, 7)}.
+#' @param add_data Optional \code{data.frame} to add data points to the
+#' surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.
+#' n_grid Integer. \code{n_grid*n_grid} is the grid for surface evaluations
+#' that will be interpolated. Increase \code{n_grid} for smoother plot.
+#' @param title Optional plot title.
+#' @param xaxis_scale Scale of x-axis (Dose-Axis). Character of c("log", "linear", "-").
+#' If "-" is set, then plot_ly tries to guess which scale shall be used.
+#' @param yaxis_scale Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
+#' If "-" is set, then plot_ly tries to guess which scale shall be used.
+#' @param xaxis_title Title for Dose-Axis.
+#' @param yaxis_title Title for Time-Axis.
+#' @param zaxis_title Title for Response-Axis.
+#' @param add_ED50_line Logical. Indicates if the line of EC_50 values shall be
+#' annotated.
+#' @param ED50_line_col Color for optionally added ED_50 line.
+#' @param ED50_line_width Width for optionally added ED_50 line.
 
 # td2pLL_model <- model1
 plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
                         dose_lim = c(1e-04,1),
                         time_lim = c(1,7),
-                        add_data = NULL, n_grid = 100, title = NULL,
+                        add_data = NULL,
+                        n_grid = 100,
+                        title = NULL,
                         xaxis_scale = "log",
                         yaxis_scale = "-",
 
@@ -41,9 +76,10 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
                         yaxis_title = "Time",
                         zaxis_title = "Response",
 
-                        add_ED50_line = T,
-                        ED50line_col = "red",
-                        ED50line_width = 6){
+                        add_ED50_line = TRUE,
+                        ED50_line_col = "red",
+                        ED50_line_width = 6,
+                        ...){
 
   time_seq = seq(time_lim[1], time_lim[2], length.out = n_grid)
   dose_seq = c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
@@ -88,9 +124,9 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
 
   # actual plotting:
 
-  res_plot <- plot_ly(x = dose_seq, y = time_seq, z = input_grid,
+  res_plot <- plotly::plot_ly(x = dose_seq, y = time_seq, z = input_grid,
                       type="surface") %>%
-    layout(title = title,
+    plotly::layout(title = title,
            scene = list(
              xaxis = list(title = xaxis_title,
                           tick0 = 0,
@@ -102,7 +138,7 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
 
   # add single data points, if available
   if(!is.null(add_data)){
-    res_plot <- res_plot %>% add_markers(x = add_data$dose,
+    res_plot <- res_plot %>% plotly::add_markers(x = add_data$dose,
                                          y = add_data$time,
                                          z = add_data$resp,
                                          marker = list(size = 2),
@@ -119,11 +155,11 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
     #add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
     add_ED50$resp <- 50
 
-    res_plot <- res_plot %>% add_trace(x = add_ED50$ED50, y = add_ED50$time, z = add_ED50$resp,
+    res_plot <- res_plot %>% plotly::add_trace(x = add_ED50$ED50, y = add_ED50$time, z = add_ED50$resp,
                                        type = "scatter3d", mode = "lines",
                                        showlegend = F,
-                                       line = list(color = ED50line_col,
-                                                   width = ED50line_width))
+                                       line = list(color = ED50_line_col,
+                                                   width = ED50_line_width))
   }
 
   return(res_plot)
