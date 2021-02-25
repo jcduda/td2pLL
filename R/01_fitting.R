@@ -1,5 +1,6 @@
 
 # function: td2pLL
+#' @export
 #' @title Calculate response value for given td2pLL model
 #' @description \code{td2pLL} returns the response value of a fully specified
 #' time-dose two-parameter log-logistic model at a certain time and dose
@@ -121,6 +122,7 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 
 
 # function: fit_td2pLL (fit td2pLL model)
+#' @export
 #' @title Fit a td2pLL model
 #'
 #' @description \code{fit_td2pLL} is used to fit time-dose two-parameter

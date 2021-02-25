@@ -52,6 +52,7 @@ td2pLL_anova <- function(data, alpha = 0.05){
   return(res)
 }
 
+#' @export
 #' @title Time-Dose-Response analysis pipeline
 #'
 #' @description \cite{TDR} performs the time-dose-response analysis pipeline as

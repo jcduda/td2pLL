@@ -23,7 +23,8 @@
 )
 }
 \description{
-\code{plot.td2pLL} is the plot method for the S3 class td2pll.
+\code{plot.td2pLL} is the plot method for the S3 class
+\code{td2pLL}.
  Model fits generated with the fit_td2pLL functions are of class
  \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
  If no fitted model but a through parameters pre-specified td2pLL model
