@@ -29,8 +29,7 @@
 #' For more details see Duda et al. (2021).
 
 
-td2pLL_anova <- function(data, alpha = 0.05){
-
+td2pLL_anova <- function(data, alpha = 0.05) {
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("time", "dose", "resp"))))
 
@@ -44,10 +43,12 @@ td2pLL_anova <- function(data, alpha = 0.05){
   p_value <- anova_res$`p value`[2]
   signif <- ifelse(p_value < 0.05, TRUE, FALSE)
 
-  res <- list(signif = signif,
-              alpha = alpha,
-              anova = anova_res,
-              conv = TRUE)
+  res <- list(
+    signif = signif,
+    alpha = alpha,
+    anova = anova_res,
+    conv = TRUE
+  )
 
   return(res)
 }
@@ -92,13 +93,12 @@ td2pLL_anova <- function(data, alpha = 0.05){
 #' \code{fit} Is, depending on the pre-test, either an object of class
 #' \code{td2pLL} or a 2pLL fit, i.e. an object of class \code{drc}.
 
-TDR <- function(data, alpha=0.05, strict_stop = FALSE, ...){
-
+TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
   stopifnot(is.data.frame(data))
   stopifnot(all(colnames(data) %in% c("time", "dose", "resp")))
   stopifnot(is.numeric(data$time) &
-              is.numeric(data$dose) &
-              is.numeric(data$resp))
+    is.numeric(data$dose) &
+    is.numeric(data$resp))
 
   stopifnot(is.numeric(alpha))
   stopifnot(length(alpha) == 1)
@@ -108,42 +108,44 @@ TDR <- function(data, alpha=0.05, strict_stop = FALSE, ...){
   stopifnot(is.logical(strict_stop))
   # ANOVA pre-test
   res_pretest <- tryCatch(
-    {td2pLL_anova(data=data, alpha=alpha)},
-
-    error = function(cond){
-      list(signif=NA,
-           alpha=alpha,
-           anova_res=NA,
-           conv=FALSE)
+    {
+      td2pLL_anova(data = data, alpha = alpha)
+    },
+    error = function(cond) {
+      list(
+        signif = NA,
+        alpha = alpha,
+        anova_res = NA,
+        conv = FALSE
+      )
     }
   )
 
-  if(res_pretest$conv == FALSE & strict_stop == TRUE){
+  if (res_pretest$conv == FALSE & strict_stop == TRUE) {
     warning("The ANOVA pre-test did not converge. Since strict_stop=TRUE
       was set, no model is fitted in the second step.")
     return(list(pretest = res_pretest, fit = NA))
   }
 
-  if((res_pretest$conv == FALSE & strict_stop == FALSE) |
-      res_pretest$signif == FALSE){
+  if ((res_pretest$conv == FALSE & strict_stop == FALSE) |
+    res_pretest$signif == FALSE) {
     res_fit <- tryCatch(
-      {fit_joint_2pLL(data=data)},
-
+      {
+        fit_joint_2pLL(data = data)
+      },
       error = function(cond) NA
     )
   }
 
 
-  if(res_pretest$signif == TRUE){
+  if (res_pretest$signif == TRUE) {
     res_fit <- tryCatch(
-      {fit_td2pLL(data=data, ...)},
-
+      {
+        fit_td2pLL(data = data, ...)
+      },
       error = function(cond) NA
     )
   }
 
   return(list(pretest = res_pretest, fit = res_fit))
-
 }
-
-

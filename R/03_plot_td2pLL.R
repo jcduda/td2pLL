@@ -64,8 +64,8 @@
 
 # td2pLL_model <- model1
 plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
-                        dose_lim = c(1e-04,1),
-                        time_lim = c(1,7),
+                        dose_lim = c(1e-04, 1),
+                        time_lim = c(1, 7),
                         add_data = NULL,
                         n_grid = 100,
                         title = NULL,
@@ -79,87 +79,104 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
                         add_ED50_line = TRUE,
                         ED50_line_col = "red",
                         ED50_line_width = 6,
-                        ...){
-
-  time_seq = seq(time_lim[1], time_lim[2], length.out = n_grid)
-  dose_seq = c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
+                        ...) {
+  time_seq <- seq(time_lim[1], time_lim[2], length.out = n_grid)
+  dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)
 
   input_grid <- expand.grid(time = time_seq, dose = dose_seq) %>%
     as.data.frame()
 
-  if(is.null(td2pLL_model) & is.null(td2pLL_coefs)){
+  if (is.null(td2pLL_model) & is.null(td2pLL_coefs)) {
     stop("Either the td2pLL_model argument or the td2pLL_coefs argument must be specified.")
   }
 
-  if(!(is.null(td2pLL_model)) & !(is.null(td2pLL_coefs))){
+  if (!(is.null(td2pLL_model)) & !(is.null(td2pLL_coefs))) {
     stop("Only td2pLL_model or td2pLL_coefs can be specified, not both.")
   }
 
   # calculate the responses at each grid-point
-  if(!is.null(td2pLL_coefs)){
-    input_grid$resp <- apply(input_grid, 1, function(x){
-      td2pLL(dose = x["dose"],
-              time = x["time"],
-              h = coefs["h"],
-              delta = coefs["delta"],
-              gamma = coefs["gamma"],
-              c0 = coefs["c0"])
-    }
-    )
+  if (!is.null(td2pLL_coefs)) {
+    input_grid$resp <- apply(input_grid, 1, function(x) {
+      td2pLL(
+        dose = x["dose"],
+        time = x["time"],
+        h = coefs["h"],
+        delta = coefs["delta"],
+        gamma = coefs["gamma"],
+        c0 = coefs["c0"]
+      )
+    })
   } else {
     input_grid$resp <- predict(td2pLL_model, newdata = input_grid)
     coefs <- coef(td2pLL_model)
   }
 
   # make matrix-style input for plot_ly function
-  input_grid <- input_grid %>% pivot_wider(names_from = dose, values_from = resp) %>%
+  input_grid <- input_grid %>%
+    pivot_wider(names_from = dose, values_from = resp) %>%
     dplyr::select(-time) %>%
     as.matrix()
 
-  if(is.null(title)){
-    title <- paste0("h = ", round(coefs["h"], 3) ,"; delta = ", round(coefs["delta"], 3) ,";\n gamma = ",
-                    round(coefs["gamma"],3) ,"; c0 = ", round(coefs["c0"], 3))
+  if (is.null(title)) {
+    title <- paste0(
+      "h = ", round(coefs["h"], 3), "; delta = ", round(coefs["delta"], 3), ";\n gamma = ",
+      round(coefs["gamma"], 3), "; c0 = ", round(coefs["c0"], 3)
+    )
   }
 
   # actual plotting:
 
-  res_plot <- plotly::plot_ly(x = dose_seq, y = time_seq, z = input_grid,
-                      type="surface") %>%
-    plotly::layout(title = title,
-           scene = list(
-             xaxis = list(title = xaxis_title,
-                          tick0 = 0,
-                          type = xaxis_scale),
-             yaxis = list(title = yaxis_title,
-                          type = yaxis_scale),
-             zaxis = list(title = zaxis_title)
-           ))
+  res_plot <- plotly::plot_ly(
+    x = dose_seq, y = time_seq, z = input_grid,
+    type = "surface"
+  ) %>%
+    plotly::layout(
+      title = title,
+      scene = list(
+        xaxis = list(
+          title = xaxis_title,
+          tick0 = 0,
+          type = xaxis_scale
+        ),
+        yaxis = list(
+          title = yaxis_title,
+          type = yaxis_scale
+        ),
+        zaxis = list(title = zaxis_title)
+      )
+    )
 
   # add single data points, if available
-  if(!is.null(add_data)){
-    res_plot <- res_plot %>% plotly::add_markers(x = add_data$dose,
-                                         y = add_data$time,
-                                         z = add_data$resp,
-                                         marker = list(size = 2),
-                                         showlegend = F)
+  if (!is.null(add_data)) {
+    res_plot <- res_plot %>% plotly::add_markers(
+      x = add_data$dose,
+      y = add_data$time,
+      z = add_data$resp,
+      marker = list(size = 2),
+      showlegend = F
+    )
   }
 
   # add ED50 line, if wanted
-  if(add_ED50_line){
+  if (add_ED50_line) {
     add_ED50 <- data.frame(
       time = time_seq,
       ED50 = coefs["delta"] * time_seq^(-coefs["gamma"]) + coefs["c0"]
     )
 
-    #add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
+    # add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
     add_ED50$resp <- 50
 
-    res_plot <- res_plot %>% plotly::add_trace(x = add_ED50$ED50, y = add_ED50$time, z = add_ED50$resp,
-                                       type = "scatter3d", mode = "lines",
-                                       showlegend = F,
-                                       line = list(color = ED50_line_col,
-                                                   width = ED50_line_width))
+    res_plot <- res_plot %>% plotly::add_trace(
+      x = add_ED50$ED50, y = add_ED50$time, z = add_ED50$resp,
+      type = "scatter3d", mode = "lines",
+      showlegend = F,
+      line = list(
+        color = ED50_line_col,
+        width = ED50_line_width
+      )
+    )
   }
 
   return(res_plot)

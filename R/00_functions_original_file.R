@@ -83,83 +83,97 @@ library(drc)
 # Output: A plotly plot
 
 
-plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo_lim = c(1,7),
-                        add_data = NULL, n_grid = 100, title = NULL, add_ED50_line = T){
-
-  expo_seq = seq(expo_lim[1], expo_lim[2], length.out = n_grid)
-  dose_seq = c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
+plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04, 1), expo_lim = c(1, 7),
+                        add_data = NULL, n_grid = 100, title = NULL, add_ED50_line = T) {
+  expo_seq <- seq(expo_lim[1], expo_lim[2], length.out = n_grid)
+  dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)
 
   input_grid <- expand.grid(expo = expo_seq, dose = dose_seq) %>%
     as.data.frame()
 
-  if(is.null(DERmod) & is.null(coefs)) stop("Either the DERmod argument or the coefs argument must be specified.")
-  if(!(is.null(DERmod)) & !(is.null(coefs))) stop("Only DERmod or coefs can be specified.")
+  if (is.null(DERmod) & is.null(coefs)) stop("Either the DERmod argument or the coefs argument must be specified.")
+  if (!(is.null(DERmod)) & !(is.null(coefs))) stop("Only DERmod or coefs can be specified.")
 
   # calculate the responses at each grid-point
-  if(!is.null(coefs)){
-    input_grid$resp <- apply(input_grid, 1, function(x){
-      ext3pLL(dose = x["dose"],
-              expo = x["expo"],
-              h = coefs["h"],
-              delta = coefs["delta"],
-              gamma = coefs["gamma"],
-              c0 = coefs["c0"])
-    }
-    )
+  if (!is.null(coefs)) {
+    input_grid$resp <- apply(input_grid, 1, function(x) {
+      ext3pLL(
+        dose = x["dose"],
+        expo = x["expo"],
+        h = coefs["h"],
+        delta = coefs["delta"],
+        gamma = coefs["gamma"],
+        c0 = coefs["c0"]
+      )
+    })
   } else {
     input_grid$resp <- predict(DERmod, newdata = input_grid)
     coefs <- coef(DERmod)
   }
 
   # make matrix-style input for plot_ly function
-  input_grid <- input_grid %>% pivot_wider(names_from = dose, values_from = resp) %>%
+  input_grid <- input_grid %>%
+    pivot_wider(names_from = dose, values_from = resp) %>%
     dplyr::select(-expo) %>%
     as.matrix()
 
-  if(is.null(title)){
-    title <- paste0("h = ", round(coefs["h"], 3) ,"; delta = ", round(coefs["delta"], 3) ,";\n gamma = ",
-                    round(coefs["gamma"],3) ,"; c0 = ", round(coefs["c0"], 3))
+  if (is.null(title)) {
+    title <- paste0(
+      "h = ", round(coefs["h"], 3), "; delta = ", round(coefs["delta"], 3), ";\n gamma = ",
+      round(coefs["gamma"], 3), "; c0 = ", round(coefs["c0"], 3)
+    )
   }
 
-  res_plot <- plot_ly(x = dose_seq, y = expo_seq, z = input_grid,
-                      type="surface") %>%
-    layout(title = title,
-           scene = list(
-             xaxis = list(title = "Dose",
-                          tick0 = 0,
-                          type = "log"),
-             yaxis = list(title = "Exposure Time"),
-             zaxis = list(title = "Response")
-           ))
+  res_plot <- plot_ly(
+    x = dose_seq, y = expo_seq, z = input_grid,
+    type = "surface"
+  ) %>%
+    layout(
+      title = title,
+      scene = list(
+        xaxis = list(
+          title = "Dose",
+          tick0 = 0,
+          type = "log"
+        ),
+        yaxis = list(title = "Exposure Time"),
+        zaxis = list(title = "Response")
+      )
+    )
 
   # add single data points, if available
-  if(!is.null(add_data)){
-    res_plot <- res_plot %>% add_markers(x = add_data$dose, y = add_data$expo, z = add_data$resp,
-                                         marker = list(size = 2), showlegend = F)
+  if (!is.null(add_data)) {
+    res_plot <- res_plot %>% add_markers(
+      x = add_data$dose, y = add_data$expo, z = add_data$resp,
+      marker = list(size = 2), showlegend = F
+    )
   }
 
   # add ED50 line, if wanted
-  if(add_ED50_line){
+  if (add_ED50_line) {
     add_ED50 <- data.frame(
       expo = expo_seq,
       ED50 = coefs["delta"] * expo_seq^(-coefs["gamma"]) + coefs["c0"]
     )
     add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
-    add_ED50$resp <- apply(add_ED50, 1, function(x){
-      ext3pLL(dose = x["ED50"],
-              expo = x["expo"],
-              h = coefs["h"],
-              delta = coefs["delta"],
-              gamma = coefs["gamma"],
-              c0 = coefs["c0"])
-    }
-    )
+    add_ED50$resp <- apply(add_ED50, 1, function(x) {
+      ext3pLL(
+        dose = x["ED50"],
+        expo = x["expo"],
+        h = coefs["h"],
+        delta = coefs["delta"],
+        gamma = coefs["gamma"],
+        c0 = coefs["c0"]
+      )
+    })
 
-    res_plot <- res_plot %>% add_trace(x = add_ED50$ED50, y = add_ED50$expo, z = add_ED50$resp,
-                                       type = "scatter3d", mode = "lines",
-                                       showlegend = F,
-                                       line = list(color = "red", width = 6))
+    res_plot <- res_plot %>% add_trace(
+      x = add_ED50$ED50, y = add_ED50$expo, z = add_ED50$resp,
+      type = "scatter3d", mode = "lines",
+      showlegend = F,
+      line = list(color = "red", width = 6)
+    )
   }
 
   return(res_plot)
@@ -178,19 +192,21 @@ plot.DERmod <- function(DERmod = NULL, coefs = NULL, dose_lim = c(1e-04,1), expo
 #   Right now, inceased doses in a log scale with base sqrt(10) is assumed
 #   for plotting the dose-axes accordingly.
 
-plot_designs <- function(designs){
+plot_designs <- function(designs) {
   suppressWarnings(
-  ggplot(data = designs, aes(x = dose, y = expo, size = as.factor(n))) +
-    geom_point(alpha = 0.7, color = "steelblue") +
-    geom_text(aes(label=n), size = 3, hjust=+0.5, vjust=0.5) +
-    scale_x_continuous(trans = scales::pseudo_log_trans(sigma = 0.0001, base = sqrt(10)),
-                       breaks = unique(designs$dose),
-                       labels = round(unique(designs$dose), 4)) +
-    labs(y = "exposure time") +
-    guides(size = FALSE) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    facet_wrap(facets = "design", labeller = "label_both")
+    ggplot(data = designs, aes(x = dose, y = expo, size = as.factor(n))) +
+      geom_point(alpha = 0.7, color = "steelblue") +
+      geom_text(aes(label = n), size = 3, hjust = +0.5, vjust = 0.5) +
+      scale_x_continuous(
+        trans = scales::pseudo_log_trans(sigma = 0.0001, base = sqrt(10)),
+        breaks = unique(designs$dose),
+        labels = round(unique(designs$dose), 4)
+      ) +
+      labs(y = "exposure time") +
+      guides(size = FALSE) +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+      facet_wrap(facets = "design", labeller = "label_both")
   )
 }
 
@@ -201,7 +217,7 @@ plot_designs <- function(designs){
 #           does not hrow an error
 # Input:
 # - x:  positive numeric
-my_pseudo_log <- function(x) asinh(x/(2 * 0.0001))/log(sqrt(10))
+my_pseudo_log <- function(x) asinh(x / (2 * 0.0001)) / log(sqrt(10))
 
 
 
@@ -224,20 +240,21 @@ my_pseudo_log <- function(x) asinh(x/(2 * 0.0001))/log(sqrt(10))
 # Output:
 # - res:      data.frame containing generated responses. Columns are expo, dose, resp
 
-generate_data <- function(model, noise_id, expDes){
+generate_data <- function(model, noise_id, expDes) {
   # grid for expo, dose, n, h, delta, gamma, c0
   inputs <- cbind.data.frame(expDes %>% dplyr::select(-design), t(as.data.frame(model)) %>% `rownames<-`(NULL))
 
   # calculate mean_resp (true mean) at each expo dose point
-  inputs$mean_resp <- apply(inputs, 1, function(x){
-    ext3pLL(dose = x["dose"],
-            expo = x["expo"],
-            h = x["h"],
-            gamma = x["gamma"],
-            c0 = x["c0"],
-            delta = x["delta"])
-  }
-  )
+  inputs$mean_resp <- apply(inputs, 1, function(x) {
+    ext3pLL(
+      dose = x["dose"],
+      expo = x["expo"],
+      h = x["h"],
+      gamma = x["gamma"],
+      c0 = x["c0"],
+      delta = x["delta"]
+    )
+  })
 
   # Calculate noise sd first
   inputs$noise_sd <- predict(lm_sd_noise, newdata = inputs[, c("expo", "dose")] %>% dplyr::mutate(dose = my_pseudo_log(dose)))
@@ -246,11 +263,11 @@ generate_data <- function(model, noise_id, expDes){
 
   stopifnot(noise_id %in% c("N1", "N2", "N3"))
 
-  if(noise_id == "N1"){
+  if (noise_id == "N1") {
     inputs$noise_sd <- inputs$noise_sd * 0.5
   }
 
-  if(noise_id == "N3"){
+  if (noise_id == "N3") {
     inputs$noise_sd <- inputs$noise_sd * 1.5
   }
 
@@ -258,7 +275,7 @@ generate_data <- function(model, noise_id, expDes){
 
 
   # generate random noise values
-  help_add_noise <- apply(inputs[, c("expo", "dose", "n", "noise_sd")], 1, function(x){
+  help_add_noise <- apply(inputs[, c("expo", "dose", "n", "noise_sd")], 1, function(x) {
     suppressWarnings(
       cbind.data.frame(expo = x["expo"], dose = x["dose"], noise_value = rnorm(n = x["n"], sd = x["noise_sd"]))
     )
@@ -273,23 +290,31 @@ generate_data <- function(model, noise_id, expDes){
 
   # First, divide by mean response at dose 0
 
-  mean_resp_0 <- res_pre %>% dplyr::filter(dose == 0) %>% dplyr::select(resp) %>% unlist %>% mean
-  res_pre <- dplyr::mutate(res_pre, resp = (resp / mean_resp_0) * 100 )
+  mean_resp_0 <- res_pre %>%
+    dplyr::filter(dose == 0) %>%
+    dplyr::select(resp) %>%
+    unlist() %>%
+    mean()
+  res_pre <- dplyr::mutate(res_pre, resp = (resp / mean_resp_0) * 100)
 
   # refit procedure: seperately fit 4pLL dose-response curves at each exposure.
   # Divide by resulting left (upper) asymptote
   all_expos <- unique(res_pre$expo)
 
   # get left asymptote (e0) or ach exposure time
-  help_left_asymp <- sapply(all_expos, function(curr_expo){
-    c(expo = curr_expo,
+  help_left_asymp <- sapply(all_expos, function(curr_expo) {
+    c(
+      expo = curr_expo,
       fitMod(dose, resp,
-             data = res_pre %>% dplyr::filter(expo == curr_expo) %>% dplyr::select(dose, resp),
-             model = "sigEmax") %>%
+        data = res_pre %>% dplyr::filter(expo == curr_expo) %>% dplyr::select(dose, resp),
+        model = "sigEmax"
+      ) %>%
         coef() %>%
         .["e0"]
     )
-  }) %>% t() %>% as.data.frame()
+  }) %>%
+    t() %>%
+    as.data.frame()
 
   # divide by left asymptote stratified by exposure time
   res <- left_join(res_pre, help_left_asymp, by = "expo") %>%
@@ -298,7 +323,6 @@ generate_data <- function(model, noise_id, expDes){
 
 
   return(res)
-
 }
 
 ##############################
@@ -336,8 +360,7 @@ generate_data <- function(model, noise_id, expDes){
 #          For the seperate model however, the LL.2 is used, as here, the LL2.2
 #          seems to generate highly varying EC50 estimates
 
-ext3pLL_anova_check <- function(data, alpha = 0.05){
-
+ext3pLL_anova_check <- function(data, alpha = 0.05) {
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("expo", "dose", "resp"))))
 
@@ -345,20 +368,27 @@ ext3pLL_anova_check <- function(data, alpha = 0.05){
   drm_seperate <- tryCatch(
     {
       drm(resp ~ dose,
-         curveid = expo,
-         data = data %>% dplyr::mutate(expo = factor(expo)),
-         fct = LL.2(upper = 100),
-         pmodels = list(~1, # h
-                        ~expo)) # EC50
-      },
-    error = function(cond){
-      return(drm(resp ~ dose,
+        curveid = expo,
+        data = data %>% dplyr::mutate(expo = factor(expo)),
+        fct = LL.2(upper = 100),
+        pmodels = list(
+          ~1, # h
+          ~expo
+        )
+      ) # EC50
+    },
+    error = function(cond) {
+      return(
+        drm(resp ~ dose,
           curveid = expo,
           control = drmc(method = "Nelder-Mead"),
           data = data %>% dplyr::mutate(expo = factor(expo)),
           fct = LL.2(upper = 100),
-          pmodels = list(~1, # h
-                         ~expo)) # EC50
+          pmodels = list(
+            ~1, # h
+            ~expo
+          )
+        ) # EC50
       )
     }
   )
@@ -385,8 +415,7 @@ ext3pLL_anova_check <- function(data, alpha = 0.05){
 # Output:
 # res:     data.frame with columns expo and EC50 containing the result
 
-get_EC50s <- function(coefs, expos){
-
+get_EC50s <- function(coefs, expos) {
   stopifnot(length(setdiff(names(coefs), c("h", "delta", "gamma", "c0"))) == 0)
   stopifnot(is.numeric(expos) & length(expos) >= 1)
   stopifnot(all(expos >= 1 & expos <= 7))
@@ -397,4 +426,3 @@ get_EC50s <- function(coefs, expos){
 
   return(res)
 }
-

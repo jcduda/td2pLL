@@ -18,8 +18,8 @@
 #' @return The response value of the model [in percent] at the given \code{time} and
 #' \code{dose} value.
 #' @examples
-#' td2pLL(time=4, dose=0.1, h=2, gamma=2.5, c0=0.1, delta=0.3)
-td2pLL <- function(time, dose, h, gamma, c0, delta){
+#' td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)
+td2pLL <- function(time, dose, h, gamma, c0, delta) {
   EC50 <- delta * time^(-gamma) + c0
   resp <- 100 - 100 * (dose^h) / (EC50^h + dose^h)
   return(resp = resp)
@@ -44,8 +44,8 @@ td2pLL <- function(time, dose, h, gamma, c0, delta){
 #'  If the lowest mean_resp value is already above 50, the function
 #'  returns the maximal dose.
 #' @return Returns the numeric \code{ED50_interp}.
-interp_ED50 <- function(data=NULL){
-  if(min(data$mean_resp) > 50) {
+interp_ED50 <- function(data = NULL) {
+  if (min(data$mean_resp) > 50) {
     ED50_interp <- max(data$dose)
   } else {
     # dose-ids just above 50 and then below 50
@@ -55,12 +55,12 @@ interp_ED50 <- function(data=NULL){
 
     # intercept
     b <- (resp_bef_after[2] - resp_bef_after[1] *
-            dose_bef_after[2]/dose_bef_after[1]) /
+      dose_bef_after[2] / dose_bef_after[1]) /
       (1 - dose_bef_after[2] / dose_bef_after[1])
     # slope
     m <- (resp_bef_after[2] - b) / dose_bef_after[2]
 
-    ED50_interp <- (50-b)/m
+    ED50_interp <- (50 - b) / m
   }
   return(ED50_interp)
 }
@@ -89,13 +89,15 @@ interp_ED50 <- function(data=NULL){
 #'  \code{delta_start} for \code{gamma} and  \code{delta}.
 #' @return List with starting values for h, delta, gamma and c0.
 
-get_starting_values <- function(data, h_start = 2, c0_start = 0){
-  data_low_time_mean <- data %>% dplyr::filter(time == min(time)) %>%
+get_starting_values <- function(data, h_start = 2, c0_start = 0) {
+  data_low_time_mean <- data %>%
+    dplyr::filter(time == min(time)) %>%
     dplyr::group_by(dose) %>%
     dplyr::summarize(mean_resp = mean(resp)) %>%
     plyr::ungroup()
 
-  data_high_time_mean <- data %>% dplyr::filter(time == max(time)) %>%
+  data_high_time_mean <- data %>%
+    dplyr::filter(time == max(time)) %>%
     dplyr::group_by(dose) %>%
     dplyr::summarize(mean_resp = mean(resp), .groups = "drop") %>%
     dplyr::ungroup()
@@ -108,16 +110,20 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 
   # get starting values for delta and gamma:
   gamma_start <- log(ED50_start_low_time / ED50_start_high_time,
-                     base = time_low_high[1]*time_low_high[2])
-  delta_start <- mean(c(ED50_start_low_time / time_low_high[1]^(gamma_start),
-                        ED50_start_high_time / time_low_high[2]^(gamma_start)))
+    base = time_low_high[1] * time_low_high[2]
+  )
+  delta_start <- mean(c(
+    ED50_start_low_time / time_low_high[1]^(gamma_start),
+    ED50_start_high_time / time_low_high[2]^(gamma_start)
+  ))
   c0_start <- c0_start
 
-  return(list(h = h_start,
-              delta = delta_start,
-              gamma = gamma_start,
-              c0 = c0_start)
-  )
+  return(list(
+    h = h_start,
+    delta = delta_start,
+    gamma = gamma_start,
+    c0 = c0_start
+  ))
 }
 
 
@@ -179,8 +185,8 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0){
 #' @return An object of class \code{c("td2pLL", "nls")}.
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
-                       upper = NULL, trace = FALSE){
-  if(!(all(colnames(data) %in% c("time", "dose", "resp")))){
+                       upper = NULL, trace = FALSE) {
+  if (!(all(colnames(data) %in% c("time", "dose", "resp")))) {
     stop("Argument data must be a data frame with columns expo, dose, resp.")
   }
 
@@ -188,54 +194,55 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
   doses <- unique(data$dose)
 
 
-  if(is.null(start)){
+  if (is.null(start)) {
     start <- get_starting_values(data)
   } else {
-    if((length(start) != 4) | !is.numeric(start)) stop("Argument start must be numeric of length 4.")
+    if ((length(start) != 4) | !is.numeric(start)) stop("Argument start must be numeric of length 4.")
   }
 
-  if(is.null(control)){
+  if (is.null(control)) {
     control <- list(maxiter = 100, warnOnly = TRUE, printEval = FALSE)
   }
 
-  if(is.null(lower)){
-    lower <- c(h = 1, delta = -3*max(doses), gamma = -10, c0 = 0)
+  if (is.null(lower)) {
+    lower <- c(h = 1, delta = -3 * max(doses), gamma = -10, c0 = 0)
   } else {
-    if((length(lower) != 4) |  !is.numeric(lower)) stop("Argument lower must be numeric of length 4.")
+    if ((length(lower) != 4) | !is.numeric(lower)) stop("Argument lower must be numeric of length 4.")
   }
 
-  if(is.null(upper)){
-    upper <- c(h = 10, delta = max(doses)*3, gamma = 10, c0 = max(doses)*3)
+  if (is.null(upper)) {
+    upper <- c(h = 10, delta = max(doses) * 3, gamma = 10, c0 = max(doses) * 3)
   } else {
-    if((length(upper) != 4) |  !is.numeric(upper)) stop("Argument upper must be numeric of length 4.")
+    if ((length(upper) != 4) | !is.numeric(upper)) stop("Argument upper must be numeric of length 4.")
   }
 
-  if(is.null(trace)){
+  if (is.null(trace)) {
     trace <- FALSE
   }
   # use means and weights
   data_w <-
-    data %>% dplyr::group_by(time, dose) %>%
-    summarize(n = n(),
-              resp_m = mean(resp)
+    data %>%
+    dplyr::group_by(time, dose) %>%
+    summarize(
+      n = n(),
+      resp_m = mean(resp)
     ) %>%
     dplyr::ungroup()
 
-  fit <- nls(resp_m ~ 100 - 100*(dose^h) / ( ( delta * time^(-gamma) + c0)^h + dose^h),
-             data = data_w,
-             weights = data_w$n,
-             algorithm = "port",
-             lower = lower,
-             upper = upper,
-             start = start,
-             trace = trace,
-             control = control
+  fit <- nls(resp_m ~ 100 - 100 * (dose^h) / ((delta * time^(-gamma) + c0)^h + dose^h),
+    data = data_w,
+    weights = data_w$n,
+    algorithm = "port",
+    lower = lower,
+    upper = upper,
+    start = start,
+    trace = trace,
+    control = control
   )
 
   attr(fit, "class") <- c("td2pLL", "nls") # to use plot.tdp2LL as method
 
   return(fit)
-
 }
 
 
@@ -263,17 +270,18 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
 #'
 #' @return An object of class \code{drc}.
 
-fit_joint_2pLL <- function(data){
-
+fit_joint_2pLL <- function(data) {
   tryCatch(
     {
       drc::drm(resp ~ dose,
-          data = data, fct = LL2.2(upper = 100))
+        data = data, fct = LL2.2(upper = 100)
+      )
     },
-    error = function(cond){
+    error = function(cond) {
       return(drc::drm(resp ~ dose,
-                 data = data, fct = LL2.2(upper = 100),
-                 control = drmc(method = "Nelder-Mead")))
+        data = data, fct = LL2.2(upper = 100),
+        control = drmc(method = "Nelder-Mead")
+      ))
     }
   )
 }
@@ -298,29 +306,32 @@ fit_joint_2pLL <- function(data){
 #' fits.
 
 
-fit_sep_2pLL <- function(data){
+fit_sep_2pLL <- function(data) {
   tryCatch(
     {
       drc::drm(resp ~ dose,
-          curveid = time,
+        curveid = time,
+        data = data %>% dplyr::mutate(time = factor(time)),
+        fct = LL.2(upper = 100),
+        pmodels = list(
+          ~1, # h
+          ~time
+        )
+      ) #
+    },
+    error = function(cond) {
+      return(
+        drc::drm(resp ~ dose,
+          curveid = expo,
+          control = drmc(method = "Nelder-Mead"),
           data = data %>% dplyr::mutate(time = factor(time)),
           fct = LL.2(upper = 100),
-          pmodels = list(~1, # h
-                         ~time)) # EC50
-    },
-    error = function(cond){
-      return(drc::drm(resp ~ dose,
-                 curveid = expo,
-                 control = drmc(method = "Nelder-Mead"),
-                 data = data %>% dplyr::mutate(time = factor(time)),
-                 fct = LL.2(upper = 100),
-                 pmodels = list(~1, # h
-                                ~time)) # EC50
+          pmodels = list(
+            ~1, # h
+            ~time
+          )
+        )
       )
     }
   )
 }
-
-
-
-
