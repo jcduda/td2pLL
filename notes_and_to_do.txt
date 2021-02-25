@@ -1,0 +1,19 @@
+# Check plot_ly reference for ticks:
+https://plotly.com/r/reference/#Layout_and_layout_style_objects
+
+# Finalize plot.td2pLL function
+	- model class might still be old one (ext3pLL), update to td2pLL
+	- function description missing / updates
+	- for xaxis_scla and y_axis_scale, consider this entry of plotly_reference:
+		type 
+			Parent: layout.scene.xaxis 
+			Type: enumerated , one of ( "-" | "linear" | "log" | "date" | "category" ) 
+			Default: "-" 
+			Sets the axis type. By default, plotly attempts to determined the axis type
+			by looking into the data of the traces that referenced the axis in question.
+
+# Ask Jakob: FIguring out al the "no visible global function definition" in the "check()" output
+
+# ALWAYS add dplyr::mutate() and so on
+
+# get_EC50s function from .R/00_functions_original_file.R not properly added yet
