@@ -90,14 +90,15 @@ interp_ED50 <- function(data=NULL){
 #' @return List with starting values for h, delta, gamma and c0.
 
 get_starting_values <- function(data, h_start = 2, c0_start = 0){
-  data_low_time_mean <- data %>% filter(time == min(time)) %>%
-    group_by(dose) %>%
-    summarize(mean_resp = mean(resp), .groups = "drop")
+  data_low_time_mean <- data %>% dplyr::filter(time == min(time)) %>%
+    dplyr::group_by(dose) %>%
+    dplyr::summarize(mean_resp = mean(resp)) %>%
+    plyr::ungroup()
 
-  data_high_time_mean <- data %>% filter(time == max(time)) %>%
-    group_by(dose) %>%
-    summarize(mean_resp = mean(resp), .groups = "drop") %>%
-    ungroup()
+  data_high_time_mean <- data %>% dplyr::filter(time == max(time)) %>%
+    dplyr::group_by(dose) %>%
+    dplyr::summarize(mean_resp = mean(resp), .groups = "drop") %>%
+    dplyr::ungroup()
 
   ED50_start_low_time <- interp_ED50(data = data_low_time_mean)
   ED50_start_high_time <- interp_ED50(data = data_high_time_mean)
@@ -214,11 +215,11 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
   }
   # use means and weights
   data_w <-
-    data %>% group_by(time, dose) %>%
+    data %>% dplyr::group_by(time, dose) %>%
     summarize(n = n(),
               resp_m = mean(resp)
     ) %>%
-    ungroup()
+    dplyr::ungroup()
 
   fit <- nls(resp_m ~ 100 - 100*(dose^h) / ( ( delta * time^(-gamma) + c0)^h + dose^h),
              data = data_w,
@@ -263,13 +264,14 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
 #' @return An object of class \code{drc}.
 
 fit_joint_2pLL <- function(data){
+
   tryCatch(
     {
-      drm(resp ~ dose,
+      drc::drm(resp ~ dose,
           data = data, fct = LL2.2(upper = 100))
     },
     error = function(cond){
-      return(drm(resp ~ dose,
+      return(drc::drm(resp ~ dose,
                  data = data, fct = LL2.2(upper = 100),
                  control = drmc(method = "Nelder-Mead")))
     }
@@ -299,7 +301,7 @@ fit_joint_2pLL <- function(data){
 fit_sep_2pLL <- function(data){
   tryCatch(
     {
-      drm(resp ~ dose,
+      drc::drm(resp ~ dose,
           curveid = time,
           data = data %>% dplyr::mutate(time = factor(time)),
           fct = LL.2(upper = 100),
@@ -307,7 +309,7 @@ fit_sep_2pLL <- function(data){
                          ~time)) # EC50
     },
     error = function(cond){
-      return(drm(resp ~ dose,
+      return(drc::drm(resp ~ dose,
                  curveid = expo,
                  control = drmc(method = "Nelder-Mead"),
                  data = data %>% dplyr::mutate(time = factor(time)),

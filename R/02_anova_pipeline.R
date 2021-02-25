@@ -55,7 +55,7 @@ td2pLL_anova <- function(data, alpha = 0.05){
 #' @export
 #' @title Time-Dose-Response analysis pipeline
 #'
-#' @description \cite{TDR} performs the time-dose-response analysis pipeline as
+#' @description \code{TDR} performs the time-dose-response analysis pipeline as
 #' presented in Duda et al. (2021). That is: For a dose-response or
 #' concentration-response data set where, additionally also the (exposure)
 #' time is varied, this procedure can be applied. The main aim of this
@@ -76,16 +76,21 @@ td2pLL_anova <- function(data, alpha = 0.05){
 #' that the data is expected to be on the percent scale and there have values
 #' (roughly) within 0 and 100.
 #' @param alpha 1- alpha is the confidence level for testing in step 1.
-#' @param strict_stop Optoinal logical. When \code{FALSE}, teh default, then
+#' @param strict_stop Optional logical. When \code{FALSE}, the default, then
 #' in case of an error due to non-convergence in the pre-test, then in the
 #' second step a simple 2pLL model is fitted as if the pre-test was non-
 #' significant.
 #' If \code{strict_stop} is \code{TRUE} and there is an error due to
 #' non-convergence in the pre-test, the procedure stops and no model is fitted
 #' in step 2.
-#' @param ... Further aguments that can be passed on to \code{\link{td2pLL_anova}}
-#' or \code{\link{fit_td2pLL}}.
-#'
+#' @param ... Further aguments that can be passed on to \code{\link{fit_td2pLL}}.
+#' @return A list with entries \code{pretest} and \code{fit}.
+#' \code{pretest} is captures the anova based pre-test result as a list with
+#' entires \code{signif} (TRUE/FALSE or NA if no-convergence), \code{alpha},
+#' \code{anova_res} (the anova result from function \cite{anova}) and
+#' \code{conv} (logical: If the pre-test converged).
+#' \code{fit} Is, depending on the pre-test, either an object of class
+#' \code{td2pLL} or a 2pLL fit, i.e. an object of class \code{drc}.
 
 TDR <- function(data, alpha=0.05, strict_stop = FALSE, ...){
 
