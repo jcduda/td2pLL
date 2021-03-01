@@ -14,21 +14,21 @@ An object of class \code{drc}.
 }
 \description{
 \code{fit_sep_2pLL} is used in the anova pre-test of the
- time-dose-response analysis pipeline in \code{\link{TDR}}. For each
- (exposure) time, a 2pLL dose-response model is fitted with
- upper limit 100 and lower limit 0. For each exposure time, an independent
- EC50 parameter is modeled. However, a common \code{h} parameter
- (or -b in the often used parametrization of the 4pLL model) is
- shared across the dose-response models of the (exposure) times.
+time-dose-response analysis pipeline in \code{\link[=TDR]{TDR()}}. For each
+(exposure) time, a 2pLL dose-response model is fitted with
+upper limit 100 and lower limit 0. For each exposure time, an independent
+EC50 parameter is modeled. However, a common \code{h} parameter
+(or -b in the often used parametrization of the 4pLL model) is
+shared across the dose-response models of the (exposure) times.
 }
 \details{
 The model serves as the full model, denoted by Q_1 in duda et al.
- (2021). \code{fit_sep_2pLL} is a wrapper function that uses the
-\code{\link[drc]{drm}} function. At first, the optimization method
+(2021). \code{fit_sep_2pLL} is a wrapper function that uses the
+\code{\link[drc:drm]{drc::drm()}} function. At first, the optimization method
 BFGS is used to fit the model. If this fails, the Nelder-Mead method is used.
 }
 \note{
-The LL.2 option from \code{\link[drc]{drm}} is used, as here,
-opposed to \code{\link{fit_joint_2pLL}}, it seems to lead to more stable
+The LL.2 option from \code{\link[drc:drm]{drc::drm()}} is used, as here,
+opposed to \code{\link[=fit_joint_2pLL]{fit_joint_2pLL()}}, it seems to lead to more stable
 fits.
 }

@@ -16,7 +16,7 @@ Entries must be greater than 0.}
 }
 \value{
 A data.frame with columns time and EC50 containing the EC50s at
- \code{times}.
+\code{times}.
 }
 \description{
 For parameters of a td2pLL model

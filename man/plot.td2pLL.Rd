@@ -19,8 +19,7 @@
   zaxis_title = "Response",
   add_ED50_line = TRUE,
   ED50_line_col = "red",
-  ED50_line_width = 6,
-  ...
+  ED50_line_width = 6
 )
 }
 \arguments{
@@ -38,8 +37,9 @@ If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.}
 \item{time_lim}{Boundaries for the time (xaxis). Default is \code{c(1, 7)}.}
 
 \item{add_data}{Optional \code{data.frame} to add data points to the
-surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.
-n_grid Integer. \code{n_grid*n_grid} is the grid for surface evaluations
+surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.}
+
+\item{n_grid}{\code{Integer}. \code{n_grid*n_grid} is the grid for surface evaluations
 that will be interpolated. Increase \code{n_grid} for smoother plot.}
 
 \item{title}{Optional plot title.}
@@ -50,7 +50,7 @@ If "-" is set, then plot_ly tries to guess which scale shall be used.}
 \item{yaxis_scale}{Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
 If "-" is set, then plot_ly tries to guess which scale shall be used.}
 
-\item{xaxis_title}{Title for Dose-Axis.}
+\item{xaxis_title}{Character Title for Dose-Axis.}
 
 \item{yaxis_title}{Title for Time-Axis.}
 
@@ -70,15 +70,15 @@ Model fits generated with the fit_td2pLL functions are of class
 \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
 If no fitted model but a through parameters pre-specified td2pLL model
 shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
-For details on the \code{td2pLL} model, see \code{\link{fit_td2pLL}}.
+For details on the \code{td2pLL} model, see \code{\link[=fit_td2pLL]{fit_td2pLL()}}.
 If the \code{TDR} function is used which performs the two-step
 modeling pipeline, one can apply plot.td2pLL to the \code{fit} list entry
 returned by TDR, if fitting a \code{td2pLL} model was chosen in accordance
 to the anova pre-test.
 }
 \details{
-For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
-For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
+For further details on the td2pLL model, check \code{\link[=fit_td2pLL]{fit_td2pLL()}}.
+For details on the ANOVA used, see \code{\link[=td2pLL_anova]{td2pLL_anova()}}. More over,
 the entire procedure is explained in duda et al. (2021).
 For plotting, the \code{plot_ly} function of package \code{plotly} is used.
 }

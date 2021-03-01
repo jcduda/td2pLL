@@ -15,12 +15,12 @@ Returns the numeric \code{ED50_interp}.
 }
 \description{
 Calculates cheap starting parameter for the ED50 parameter of a
- 2pLL model by interpolation. This function is used in get_starting_values.
+2pLL model by interpolation. This function is used in get_starting_values.
 }
 \details{
 The function assumes that the mean response values lay within 0 and
- 100, i.e. have percent units.
- It also assumes a downward trend of the ED50 with dose.
- If the lowest mean_resp value is already above 50, the function
- returns the maximal dose.
+100, i.e. have percent units.
+It also assumes a downward trend of the ED50 with dose.
+If the lowest mean_resp value is already above 50, the function
+returns the maximal dose.
 }

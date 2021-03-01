@@ -21,7 +21,7 @@ If \code{strict_stop} is \code{TRUE} and there is an error due to
 non-convergence in the pre-test, the procedure stops and no model is fitted
 in step 2.}
 
-\item{...}{Further aguments that can be passed on to \code{\link{fit_td2pLL}}.}
+\item{...}{Further aguments that can be passed on to \code{\link[=fit_td2pLL]{fit_td2pLL()}}.}
 }
 \value{
 A list with entries \code{pretest} and \code{fit}.
@@ -43,13 +43,13 @@ nested ANOVA if the (exposure) time has an influence on the dose-response
 relationship. In case of a significant results, the time-dose two-parameter
 log-logistic model is fitted to the data:
 \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
- with
+with
 \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0.}
 If no significant result is obtained, a dose-response 2pLL curve is fitted,
 inoring the information on (exposure) time.
 }
 \details{
-For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
-For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
+For further details on the td2pLL model, check \code{\link[=fit_td2pLL]{fit_td2pLL()}}.
+For details on the ANOVA used, see \code{\link[=td2pLL_anova]{td2pLL_anova()}}. More over,
 the entire procedure is explained in duda et al. (2021).
 }

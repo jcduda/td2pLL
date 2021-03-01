@@ -2,7 +2,7 @@
 # function: td2pLL
 #' @export
 #' @title Calculate response value for given td2pLL model
-#' @description \code{td2pLL} returns the response value of a fully specified
+#' @description `td2pLL` returns the response value of a fully specified
 #' time-dose two-parameter log-logistic model at a certain time and dose
 #' value:
 #' \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
@@ -11,12 +11,12 @@
 #' @param time numeric for the time value where the response shall be calculated
 #' @param dose numeric for the dose (or concentration) value where the response
 #' shall be calculated
-#' @param h The \code{h} parameter of the model
-#' @param gamma The \code{gamma} parameter of the model
-#' @param c0 The \code{c0} parameter of the model
-#' @param delta The \code{delta} parameter of the model
-#' @return The response value of the model [in percent] at the given \code{time} and
-#' \code{dose} value.
+#' @param h The `h` parameter of the model
+#' @param gamma The `gamma` parameter of the model
+#' @param c0 The `c0` parameter of the model
+#' @param delta The `delta` parameter of the model
+#' @return The response value of the model _in percent_ at the given `time` and
+#' `dose` value.
 #' @examples
 #' td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)
 td2pLL <- function(time, dose, h, gamma, c0, delta) {
@@ -43,7 +43,7 @@ td2pLL <- function(time, dose, h, gamma, c0, delta) {
 #'  It also assumes a downward trend of the ED50 with dose.
 #'  If the lowest mean_resp value is already above 50, the function
 #'  returns the maximal dose.
-#' @return Returns the numeric \code{ED50_interp}.
+#' @return Returns the numeric `ED50_interp`.
 interp_ED50 <- function(data = NULL) {
   if (min(data$mean_resp) > 50) {
     ED50_interp <- max(data$dose)
@@ -73,33 +73,33 @@ interp_ED50 <- function(data = NULL) {
 #' @description Calculates (cheap) default starting values for fitting a
 #'  td2pLL model based on dose time response data.
 #' @param data data frame with numeric columns named time, dose and resp
-#' @param h_start optional starting value for the \code{h} parameter.
+#' @param h_start optional starting value for the `h` parameter.
 #' Default is 2.
-#' @param c0_start optional starting value for the theshold parameter \code{c0}.
+#' @param c0_start optional starting value for the theshold parameter `c0`.
 #' Default is 0.
-#' @details As starting value for \code{delta} and \code{gamma}, a pair of
+#' @details As starting value for `delta` and `gamma`, a pair of
 #' cheap starting values of (dose, ED50) at the lowest and the highest
-#' (exposure) time are calculated via the \code{\link{interp_ED50}} function.
+#' (exposure) time are calculated via the [interp_ED50()] function.
 #' With these two pairs (dose_1, ED50_1) and (dose_2, ED50_2), as
-#' well as the set starting values of \code{h} and \code{c0},
+#' well as the set starting values of `h` and `c0`,
 #' the model equation of the td2pLL model
 #' \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h},}
 #' \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
-#'  is solved to get the starting values \code{gamma_start} and
-#'  \code{delta_start} for \code{gamma} and  \code{delta}.
+#'  is solved to get the starting values `gamma_start` and
+#'  `delta_start` for `gamma` and  `delta`.
 #' @return List with starting values for h, delta, gamma and c0.
 
 get_starting_values <- function(data, h_start = 2, c0_start = 0) {
   data_low_time_mean <- data %>%
-    dplyr::filter(time == min(time)) %>%
-    dplyr::group_by(dose) %>%
-    dplyr::summarize(mean_resp = mean(resp)) %>%
-    plyr::ungroup()
+    dplyr::filter(.data$time == min(.data$time)) %>%
+    dplyr::group_by(.data$dose) %>%
+    dplyr::summarize(mean_resp = mean(.data$resp)) %>%
+    dplyr::ungroup()
 
   data_high_time_mean <- data %>%
-    dplyr::filter(time == max(time)) %>%
-    dplyr::group_by(dose) %>%
-    dplyr::summarize(mean_resp = mean(resp), .groups = "drop") %>%
+    dplyr::filter(.data$time == max(.data$time)) %>%
+    dplyr::group_by(.data$dose) %>%
+    dplyr::summarize(mean_resp = mean(.data$resp), .groups = "drop") %>%
     dplyr::ungroup()
 
   ED50_start_low_time <- interp_ED50(data = data_low_time_mean)
@@ -132,7 +132,7 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0) {
 #' @export
 #' @title Fit a td2pLL model
 #'
-#' @description \code{fit_td2pLL} is used to fit time-dose two-parameter
+#' @description `fit_td2pLL` is used to fit time-dose two-parameter
 #'  log-logistic functions to time-dose-response data by the least-squares
 #'  approach. This application of this model is tailored to dose-repsonse
 #'  cytotoxicity data, where also the exposure time is varied in the experiments.
@@ -142,47 +142,47 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0) {
 #'  \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
 #'  where
 #'  \itemize{
-#'    \item \code{d} is the dose or concetration, \code{t} is the (exposure)
+#'    \item `d` is the dose or concetration, `t` is the (exposure)
 #'  time,
-#'    \item  \code{h} is the hill- or slope parameter as known in the
+#'    \item  `h` is the hill- or slope parameter as known in the
 #'  classical 4pLL model (there often parametrized as -b), a.k.a. sigmoid
-#'  Emax model \code{\link[DoseFinding]{drmodels}},
-#'    \item \code{gamma} represents the influence of (exposure) time on
+#'  Emax model [DoseFinding::drmodels()],
+#'    \item `gamma` represents the influence of (exposure) time on
 #'     the dose-response relationship. Note that the model
-#'     has identifiability issues if \code{gamma}=0. This is
-#'     teh case when there is no infuence of (exposure) time \code{t}
+#'     has identifiability issues if `gamma`=0. This is
+#'     teh case when there is no infuence of (exposure) time `t`
 #'     on the dose-response relationship. Hence, for such a
 #'     situation, the model is not appropriate.
-#'    \item \code{delta} is the maximum effect of (exposure) time on
+#'    \item `delta` is the maximum effect of (exposure) time on
 #'     the EC50 parameter and
-#'    \item \code{c0} is the threshold or minimal value of the
+#'    \item `c0` is the threshold or minimal value of the
 #'     EC50 value at all (exposure) times.
 #'  }
 #' @param data numeric data frame with columns named time, dose and resp.
 #' @param start Optional listwith named numeric startig values for
-#' \code{h}, \code{delta}, \code{gamma} and \code{c0}. When no starting values
-#' are provided, the default is used which is 2 for \code{h}, 0 for \code{c0}
+#' `h`, `delta`, `gamma` and `c0`. When no starting values
+#' are provided, the default is used which is 2 for `h`, 0 for `c0`
 #' and a linear interpolation procedure that leads to starting values for
-#' \code{delta} and \code{gamma}. For details, see
-#' \code{\link{get_starting_values}}.
+#' `delta` and `gamma`. For details, see
+#' [get_starting_values()].
 #' @param control Optional control argument for numerical optimization that will
-#' be passed to the \code{nls} function that is used here for non-linear
+#' be passed to the `nls` function that is used here for non-linear
 #' fitting.
 #' @param lower Optional named list or named numeric vector for lower
-#' boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
-#' \code{c0} (in this order). As default, 1, -3*max(dose), -10 and 0 are used.
+#' boundaries for the parameters `h`, `delta`, `gamma` and
+#' `c0` (in this order). As default, 1, -3*max(dose), -10 and 0 are used.
 #' @param upper Optional named list or named numeric vector for upper
-#' boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
-#' \code{c0} (in this order). As default, 10, 3*max(dose), 10 and 3*max(dose)
+#' boundaries for the parameters `h`, `delta`, `gamma` and
+#' `c0` (in this order). As default, 10, 3*max(dose), 10 and 3*max(dose)
 #'  are used.
 #' @param trace Ooptinal argument passed to nls function to trace (print) the
 #' optimization status at each iteration.
 #' @details The non-linear fitting minimizes the sum of squared errors.
-#' We use the \code{nls} function with the port algorithm.
+#' We use the `nls` function with the port algorithm.
 #' Note that the fitting assumes the response data to be measured in percent,
 #' i.e. ranges between 100 and 0 where it is assumed to be 100 at
 #' dose=0 and decreases with increasing doses.
-#' @return An object of class \code{c("td2pLL", "nls")}.
+#' @return An object of class `c("td2pLL", "nls")`.
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
                        upper = NULL, trace = FALSE) {
@@ -222,10 +222,10 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
   # use means and weights
   data_w <-
     data %>%
-    dplyr::group_by(time, dose) %>%
+    dplyr::group_by(.data$time, .data$dose) %>%
     summarize(
-      n = n(),
-      resp_m = mean(resp)
+      n = dplyr::n(),
+      resp_m = mean(.data$resp)
     ) %>%
     dplyr::ungroup()
 
@@ -249,9 +249,9 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
 
 #' @title Fitting a 2pLL model
 #'
-#' @description \code{fit_joint_2pLL} fits a 2pLL model. The "joint" is in the
+#' @description `fit_joint_2pLL` fits a 2pLL model. The "joint" is in the
 #' name because, despite being a regular 2pLL model, this function is used
-#' in the anova-td2pLL pipeline \code{\link{TDR}}: If the anova pre-test, that
+#' in the anova-td2pLL pipeline [TDR()]: If the anova pre-test, that
 #' checks if there is a difference in EC50 parameters between (exposure) times,
 #' is not significant, the exposure times are ignored. In other words,
 #' a single, 'joint', dose-response curve is fitted to the data,
@@ -259,28 +259,28 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
 #'
 #' @param data data frame containing the dose and resp variable
 #' @details The function is a wrapper function using the LL2.2() argument
-#' from the \code{\link[drc]{drm}} function with the fixed asymptotes
+#' from the [drc::drm()] function with the fixed asymptotes
 #' upper=100 and lower=0.
 #' As a first try, the BFGS method is used as optimization procedure.
 #' If this yields an error, the Nelder-Mead method is used as opitmization
 #' method.
-#' @note When using the LL2.2() model from the \code{\link[drc]{drm}} function,
+#' @note When using the LL2.2() model from the [drc::drm()] function,
 #' the EC50 parameter is parametrized as log(EC50). We do this for improved
 #' stability.
 #'
-#' @return An object of class \code{drc}.
+#' @return An object of class `drc`.
 
 fit_joint_2pLL <- function(data) {
   tryCatch(
     {
       drc::drm(resp ~ dose,
-        data = data, fct = LL2.2(upper = 100)
+        data = data, fct = drc::LL2.2(upper = 100)
       )
     },
     error = function(cond) {
       return(drc::drm(resp ~ dose,
-        data = data, fct = LL2.2(upper = 100),
-        control = drmc(method = "Nelder-Mead")
+        data = data, fct = drc::LL2.2(upper = 100),
+        control = drc::drmc(method = "Nelder-Mead")
       ))
     }
   )
@@ -288,31 +288,34 @@ fit_joint_2pLL <- function(data) {
 
 #' @title Fitting seperate 2pLL models for (exposure) times
 #'
-#' @description \code{fit_sep_2pLL} is used in the anova pre-test of the
-#'  time-dose-response analysis pipeline in \code{\link{TDR}}. For each
+#' @description `fit_sep_2pLL` is used in the anova pre-test of the
+#'  time-dose-response analysis pipeline in [TDR()]. For each
 #'  (exposure) time, a 2pLL dose-response model is fitted with
 #'  upper limit 100 and lower limit 0. For each exposure time, an independent
-#'  EC50 parameter is modeled. However, a common \code{h} parameter
+#'  EC50 parameter is modeled. However, a common `h` parameter
 #'  (or -b in the often used parametrization of the 4pLL model) is
 #'  shared across the dose-response models of the (exposure) times.
 #' @param data Data frame containing the dose, resp and time variable.
 #' @details The model serves as the full model, denoted by Q_1 in duda et al.
-#'  (2021). \code{fit_sep_2pLL} is a wrapper function that uses the
-#' \code{\link[drc]{drm}} function. At first, the optimization method
+#'  (2021). `fit_sep_2pLL` is a wrapper function that uses the
+#' [drc::drm()] function. At first, the optimization method
 #' BFGS is used to fit the model. If this fails, the Nelder-Mead method is used.
-#' @return An object of class \code{drc}.
-#' @note The LL.2 option from \code{\link[drc]{drm}} is used, as here,
-#' opposed to \code{\link{fit_joint_2pLL}}, it seems to lead to more stable
+#' @return An object of class `drc`.
+#' @note The LL.2 option from [drc::drm()] is used, as here,
+#' opposed to [fit_joint_2pLL()], it seems to lead to more stable
 #' fits.
+#' @importFrom rlang .data
 
 
 fit_sep_2pLL <- function(data) {
+
+  data$time <- as.factor(data$time)
   tryCatch(
     {
       drc::drm(resp ~ dose,
-        curveid = time,
-        data = data %>% dplyr::mutate(time = factor(time)),
-        fct = LL.2(upper = 100),
+        curveid = .data$time,
+        data = data,
+        fct = drc::LL.2(upper = 100),
         pmodels = list(
           ~1, # h
           ~time
@@ -322,10 +325,10 @@ fit_sep_2pLL <- function(data) {
     error = function(cond) {
       return(
         drc::drm(resp ~ dose,
-          curveid = expo,
-          control = drmc(method = "Nelder-Mead"),
-          data = data %>% dplyr::mutate(time = factor(time)),
-          fct = LL.2(upper = 100),
+          curveid = .data$time,
+          control = drc::drmc(method = "Nelder-Mead"),
+          data = data,
+          fct = drc::LL.2(upper = 100),
           pmodels = list(
             ~1, # h
             ~time

@@ -21,7 +21,7 @@ fit_td2pLL(
 are provided, the default is used which is 2 for \code{h}, 0 for \code{c0}
 and a linear interpolation procedure that leads to starting values for
 \code{delta} and \code{gamma}. For details, see
-\code{\link{get_starting_values}}.}
+\code{\link[=get_starting_values]{get_starting_values()}}.}
 
 \item{control}{Optional control argument for numerical optimization that will
 be passed to the \code{nls} function that is used here for non-linear
@@ -33,8 +33,8 @@ boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
 
 \item{upper}{Optional named list or named numeric vector for upper
 boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
-\code{c0} (in this order). As default, 10, 3*max(dose), 10 and 3*max(dose)
- are used.}
+\code{c0} (in this order). As default, 10, 3\emph{max(dose), 10 and 3}max(dose)
+are used.}
 
 \item{trace}{Ooptinal argument passed to nls function to trace (print) the
 optimization status at each iteration.}
@@ -44,31 +44,31 @@ An object of class \code{c("td2pLL", "nls")}.
 }
 \description{
 \code{fit_td2pLL} is used to fit time-dose two-parameter
- log-logistic functions to time-dose-response data by the least-squares
- approach. This application of this model is tailored to dose-repsonse
- cytotoxicity data, where also the exposure time is varied in the experiments.
- The model formula is
- \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
- with
- \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
- where
- \itemize{
-   \item \code{d} is the dose or concetration, \code{t} is the (exposure)
- time,
-   \item  \code{h} is the hill- or slope parameter as known in the
- classical 4pLL model (there often parametrized as -b), a.k.a. sigmoid
- Emax model \code{\link[DoseFinding]{drmodels}},
-   \item \code{gamma} represents the influence of (exposure) time on
-    the dose-response relationship. Note that the model
-    has identifiability issues if \code{gamma}=0. This is
-    teh case when there is no infuence of (exposure) time \code{t}
-    on the dose-response relationship. Hence, for such a
-    situation, the model is not appropriate.
-   \item \code{delta} is the maximum effect of (exposure) time on
-    the EC50 parameter and
-   \item \code{c0} is the threshold or minimal value of the
-    EC50 value at all (exposure) times.
- }
+log-logistic functions to time-dose-response data by the least-squares
+approach. This application of this model is tailored to dose-repsonse
+cytotoxicity data, where also the exposure time is varied in the experiments.
+The model formula is
+\deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
+with
+\deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
+where
+\itemize{
+\item \code{d} is the dose or concetration, \code{t} is the (exposure)
+time,
+\item  \code{h} is the hill- or slope parameter as known in the
+classical 4pLL model (there often parametrized as -b), a.k.a. sigmoid
+Emax model \code{\link[DoseFinding:drmodels]{DoseFinding::drmodels()}},
+\item \code{gamma} represents the influence of (exposure) time on
+the dose-response relationship. Note that the model
+has identifiability issues if \code{gamma}=0. This is
+teh case when there is no infuence of (exposure) time \code{t}
+on the dose-response relationship. Hence, for such a
+situation, the model is not appropriate.
+\item \code{delta} is the maximum effect of (exposure) time on
+the EC50 parameter and
+\item \code{c0} is the threshold or minimal value of the
+EC50 value at all (exposure) times.
+}
 }
 \details{
 The non-linear fitting minimizes the sum of squared errors.

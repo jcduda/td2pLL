@@ -21,46 +21,47 @@
 
 #' @title Plot interactive td2pLL models
 #'
-#' @description \code{plot.td2pLL} is the plot method for the S3 class
-#' \code{td2pLL}.
+#' @description `plot.td2pLL` is the plot method for the S3 class
+#' `td2pLL`.
 #' Model fits generated with the fit_td2pLL functions are of class
-#' \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
+#' `c("td2pLL", "nls")` and can therefore be used for this plot method.
 #' If no fitted model but a through parameters pre-specified td2pLL model
-#' shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
-#' For details on the \code{td2pLL} model, see \code{\link{fit_td2pLL}}.
-#' If the \code{TDR} function is used which performs the two-step
-#' modeling pipeline, one can apply plot.td2pLL to the \code{fit} list entry
-#' returned by TDR, if fitting a \code{td2pLL} model was chosen in accordance
+#' shall be plotted, this can be done via the `td2pLL_coefs` argument.
+#' For details on the `td2pLL` model, see [fit_td2pLL()].
+#' If the `TDR` function is used which performs the two-step
+#' modeling pipeline, one can apply plot.td2pLL to the `fit` list entry
+#' returned by TDR, if fitting a `td2pLL` model was chosen in accordance
 #' to the anova pre-test.
-#' @details For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
-#' For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
+#' @details For further details on the td2pLL model, check [fit_td2pLL()].
+#' For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #' the entire procedure is explained in duda et al. (2021).
-#' For plotting, the \code{plot_ly} function of package \code{plotly} is used.
-#' @param td2pLL_model A td2pLL object generatet via \code{fit_td2pLL}. If not
-#' provided, alternatively, \code{td2pLL_coefs} can be provided.
+#' For plotting, the `plot_ly` function of package `plotly` is used.
+#' @param td2pLL_model A td2pLL object generatet via `fit_td2pLL`. If not
+#' provided, alternatively, `td2pLL_coefs` can be provided.
 #' @param td2pLL_coefs Named numeric vector with parameters for h, delta, gamma and c0
 #' of the td2pLL model.
 #' @param dose_lim Boundaries of the doses (xaxis) to be plotted. Default is
-#' \code{c(1e-4, 1)}.
-#' Note: If \code{xaxis_scale = "log"} (default), then \code{dose_lim} cannot include 0.
-#' If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.
-#' @param time_lim Boundaries for the time (xaxis). Default is \code{c(1, 7)}.
-#' @param add_data Optional \code{data.frame} to add data points to the
-#' surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.
-#' n_grid Integer. \code{n_grid*n_grid} is the grid for surface evaluations
-#' that will be interpolated. Increase \code{n_grid} for smoother plot.
+#' `c(1e-4, 1)`.
+#' Note: If `xaxis_scale = "log"` (default), then `dose_lim` cannot include 0.
+#' If `dose_lim` shall include the 0, set `xaxis_scale = "linear"`.
+#' @param time_lim Boundaries for the time (xaxis). Default is `c(1, 7)`.
+#' @param add_data Optional `data.frame` to add data points to the
+#' surface plot. Must include columns `dose`, `time` and `resp`.
+#' @param n_grid `Integer`. `n_grid*n_grid` is the grid for surface evaluations
+#' that will be interpolated. Increase `n_grid` for smoother plot.
 #' @param title Optional plot title.
 #' @param xaxis_scale Scale of x-axis (Dose-Axis). Character of c("log", "linear", "-").
 #' If "-" is set, then plot_ly tries to guess which scale shall be used.
 #' @param yaxis_scale Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
 #' If "-" is set, then plot_ly tries to guess which scale shall be used.
-#' @param xaxis_title Title for Dose-Axis.
+#' @param xaxis_title Character Title for Dose-Axis.
 #' @param yaxis_title Title for Time-Axis.
 #' @param zaxis_title Title for Response-Axis.
 #' @param add_ED50_line Logical. Indicates if the line of EC_50 values shall be
 #' annotated.
 #' @param ED50_line_col Color for optionally added ED_50 line.
 #' @param ED50_line_width Width for optionally added ED_50 line.
+
 
 # td2pLL_model <- model1
 plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
@@ -78,8 +79,8 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
 
                         add_ED50_line = TRUE,
                         ED50_line_col = "red",
-                        ED50_line_width = 6,
-                        ...) {
+                        ED50_line_width = 6
+                        ) {
   time_seq <- seq(time_lim[1], time_lim[2], length.out = n_grid)
   dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)
@@ -114,8 +115,8 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
 
   # make matrix-style input for plot_ly function
   input_grid <- input_grid %>%
-    pivot_wider(names_from = dose, values_from = resp) %>%
-    dplyr::select(-time) %>%
+    pivot_wider(names_from = .data$dose, values_from = .data$resp) %>%
+    dplyr::select(-.data$time) %>%
     as.matrix()
 
   if (is.null(title)) {

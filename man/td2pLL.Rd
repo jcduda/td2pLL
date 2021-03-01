@@ -21,7 +21,7 @@ shall be calculated}
 \item{delta}{The \code{delta} parameter of the model}
 }
 \value{
-The response value of the model [in percent] at the given \code{time} and
+The response value of the model \emph{in percent} at the given \code{time} and
 \code{dose} value.
 }
 \description{
@@ -29,8 +29,8 @@ The response value of the model [in percent] at the given \code{time} and
 time-dose two-parameter log-logistic model at a certain time and dose
 value:
 \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
- with
- \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
+with
+\deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
 }
 \examples{
 td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)

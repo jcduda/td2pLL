@@ -8,8 +8,8 @@
 #' based pre-test if the td2pLL model is appropriate.
 #' That means, it is checked if the exposure time has an effect on the
 #' dose-response relationship or not.
-#' @param data data frame containing the response \code{resp}, \code{time} and
-#' \code{dose}
+#' @param data data frame containing the response `resp`, `time` and
+#' `dose`
 #' @param alpha Optional. alpha is 1 - confidence level.
 #' @details A nested anova is performed where a null model is tested against
 #' a full model. The null model is a regular 2pLL model with upper and
@@ -17,7 +17,7 @@
 #' The (exposure) time variable is ignored and a single dose-response
 #' curve is fitted for the null model.
 #' In the full model, an individual EC50 value is calculated for each (exposure)
-#' time level. However, only one common \code{h} parameter is included in
+#' time level. However, only one common `h` parameter is included in
 #' the full model.
 #' Hence, if the test rejects the null model, there seems to be significant
 #' evidence that (exposure) time has an effect on the dose-response
@@ -56,7 +56,7 @@ td2pLL_anova <- function(data, alpha = 0.05) {
 #' @export
 #' @title Time-Dose-Response analysis pipeline
 #'
-#' @description \code{TDR} performs the time-dose-response analysis pipeline as
+#' @description `TDR` performs the time-dose-response analysis pipeline as
 #' presented in Duda et al. (2021). That is: For a dose-response or
 #' concentration-response data set where, additionally also the (exposure)
 #' time is varied, this procedure can be applied. The main aim of this
@@ -70,28 +70,28 @@ td2pLL_anova <- function(data, alpha = 0.05) {
 #' \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0.}
 #' If no significant result is obtained, a dose-response 2pLL curve is fitted,
 #' inoring the information on (exposure) time.
-#' @details For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
-#' For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
+#' @details For further details on the td2pLL model, check [fit_td2pLL()].
+#' For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #' the entire procedure is explained in duda et al. (2021).
 #' @param data numeric data frame with columns named time, dose and resp. Note
 #' that the data is expected to be on the percent scale and there have values
 #' (roughly) within 0 and 100.
 #' @param alpha 1- alpha is the confidence level for testing in step 1.
-#' @param strict_stop Optional logical. When \code{FALSE}, the default, then
+#' @param strict_stop Optional logical. When `FALSE`, the default, then
 #' in case of an error due to non-convergence in the pre-test, then in the
 #' second step a simple 2pLL model is fitted as if the pre-test was non-
 #' significant.
-#' If \code{strict_stop} is \code{TRUE} and there is an error due to
+#' If `strict_stop` is `TRUE` and there is an error due to
 #' non-convergence in the pre-test, the procedure stops and no model is fitted
 #' in step 2.
-#' @param ... Further aguments that can be passed on to \code{\link{fit_td2pLL}}.
-#' @return A list with entries \code{pretest} and \code{fit}.
-#' \code{pretest} is captures the anova based pre-test result as a list with
-#' entires \code{signif} (TRUE/FALSE or NA if no-convergence), \code{alpha},
-#' \code{anova_res} (the anova result from function \cite{anova}) and
-#' \code{conv} (logical: If the pre-test converged).
-#' \code{fit} Is, depending on the pre-test, either an object of class
-#' \code{td2pLL} or a 2pLL fit, i.e. an object of class \code{drc}.
+#' @param ... Further aguments that can be passed on to [fit_td2pLL()].
+#' @return A list with entries `pretest` and `fit`.
+#' `pretest` is captures the anova based pre-test result as a list with
+#' entires `signif` (TRUE/FALSE or NA if no-convergence), `alpha`,
+#' `anova_res` (the anova result from function \cite{anova}) and
+#' `conv` (logical: If the pre-test converged).
+#' `fit` Is, depending on the pre-test, either an object of class
+#' `td2pLL` or a 2pLL fit, i.e. an object of class `drc`.
 
 TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
   stopifnot(is.data.frame(data))

@@ -20,17 +20,17 @@ List with starting values for h, delta, gamma and c0.
 }
 \description{
 Calculates (cheap) default starting values for fitting a
- td2pLL model based on dose time response data.
+td2pLL model based on dose time response data.
 }
 \details{
 As starting value for \code{delta} and \code{gamma}, a pair of
 cheap starting values of (dose, ED50) at the lowest and the highest
-(exposure) time are calculated via the \code{\link{interp_ED50}} function.
+(exposure) time are calculated via the \code{\link[=interp_ED50]{interp_ED50()}} function.
 With these two pairs (dose_1, ED50_1) and (dose_2, ED50_2), as
 well as the set starting values of \code{h} and \code{c0},
 the model equation of the td2pLL model
 \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h},}
 \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
- is solved to get the starting values \code{gamma_start} and
- \code{delta_start} for \code{gamma} and  \code{delta}.
+is solved to get the starting values \code{gamma_start} and
+\code{delta_start} for \code{gamma} and  \code{delta}.
 }
