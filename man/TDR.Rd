@@ -13,7 +13,7 @@ that the data is expected to be on the percent scale and there have values
 
 \item{alpha}{1- alpha is the confidence level for testing in step 1.}
 
-\item{strict_stop}{Optional logical. When \code{FALSE}, teh default, then
+\item{strict_stop}{Optional logical. When \code{FALSE}, the default, then
 in case of an error due to non-convergence in the pre-test, then in the
 second step a simple 2pLL model is fitted as if the pre-test was non-
 significant.

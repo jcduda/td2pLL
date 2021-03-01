@@ -45,10 +45,10 @@ that will be interpolated. Increase \code{n_grid} for smoother plot.}
 \item{title}{Optional plot title.}
 
 \item{xaxis_scale}{Scale of x-axis (Dose-Axis). Character of c("log", "linear", "-").
-If "-" then plot_ly tries to guess which scale shall be used.}
+If "-" is set, then plot_ly tries to guess which scale shall be used.}
 
 \item{yaxis_scale}{Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
-If "-" then plot_ly tries to guess which scale shall be used.}
+If "-" is set, then plot_ly tries to guess which scale shall be used.}
 
 \item{xaxis_title}{Title for Dose-Axis.}
 
@@ -80,4 +80,5 @@ to the anova pre-test.
 For further details on the td2pLL model, check \code{\link{fit_td2pLL}}.
 For details on the ANOVA used, see \code{\link{td2pLL_anova}}. More over,
 the entire procedure is explained in duda et al. (2021).
+For plotting, the \code{plot_ly} function of package \code{plotly} is used.
 }
