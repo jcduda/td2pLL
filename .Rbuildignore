@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^attics$
 ^notes_and_to_do\.txt$
+^LICENSE\.md$
