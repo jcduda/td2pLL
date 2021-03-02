@@ -24,9 +24,9 @@
 #'     on the dose-response relationship. Hence, for such a
 #'     situation, the model is not appropriate.
 #'    \item `delta` is the maximum effect of (exposure) time on
-#'     the EC50 parameter and
+#'     the ED50 parameter and
 #'    \item `c0` is the threshold or minimal value of the
-#'     EC50 value at all (exposure) times.
+#'     ED50 value at all (exposure) times.
 #'  }
 #' @param data numeric data frame with columns named time, dose and resp.
 #' @param start Optional listwith named numeric startig values for

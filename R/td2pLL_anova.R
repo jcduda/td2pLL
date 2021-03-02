@@ -15,7 +15,7 @@
 #' lower limit 100 and 0, respectively.
 #' The (exposure) time variable is ignored and a single dose-response
 #' curve is fitted for the null model.
-#' In the full model, an individual EC50 value is calculated for each (exposure)
+#' In the full model, an individual ED50 value is calculated for each (exposure)
 #' time level. However, only one common `h` parameter is included in
 #' the full model.
 #' Hence, if the test rejects the null model, there seems to be significant
@@ -32,7 +32,7 @@ td2pLL_anova <- function(data, alpha = 0.05) {
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("time", "dose", "resp"))))
 
-  # dose-response curve with seperate EC50 parameters, but shared h
+  # dose-response curve with separate ED50 parameters, but shared h
   drm_seperate <- fit_sep_2pLL(data = data)
 
   # single dose-response curves ignoring exposure time

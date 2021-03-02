@@ -37,7 +37,7 @@
 #' @param xaxis_title Character Title for Dose-Axis.
 #' @param yaxis_title Title for Time-Axis.
 #' @param zaxis_title Title for Response-Axis.
-#' @param add_ED50_line Logical. Indicates if the line of EC_50 values shall be
+#' @param add_ED50_line Logical. Indicates if the line of ED50 values shall be
 #' annotated.
 #' @param ED50_line_col Color for optionally added ED_50 line.
 #' @param ED50_line_width Width for optionally added ED_50 line.

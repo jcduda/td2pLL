@@ -3,7 +3,7 @@
 #' @description `fit_joint_2pLL` fits a 2pLL model. The "joint" is in the
 #' name because, despite being a regular 2pLL model, this function is used
 #' in the anova-td2pLL pipeline [TDR()]: If the anova pre-test, that
-#' checks if there is a difference in EC50 parameters between (exposure) times,
+#' checks if there is a difference in ED50 parameters between (exposure) times,
 #' is not significant, the exposure times are ignored. In other words,
 #' a single, 'joint', dose-response curve is fitted to the data,
 #' ignoring the information of exposure time.
@@ -16,7 +16,7 @@
 #' If this yields an error, the Nelder-Mead method is used as opitmization
 #' method.
 #' @note When using the LL2.2() model from the [drc::drm()] function,
-#' the EC50 parameter is parametrized as log(EC50). We do this for improved
+#' the ED50 parameter is parametrized as log(ED50). We do this for improved
 #' stability.
 #'
 #' @return An object of class `drc`.

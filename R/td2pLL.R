@@ -20,7 +20,7 @@
 #' @examples
 #' td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)
 td2pLL <- function(time, dose, h, gamma, c0, delta) {
-  EC50 <- delta * time^(-gamma) + c0
-  resp <- 100 - 100 * (dose^h) / (EC50^h + dose^h)
+  ED50 <- delta * time^(-gamma) + c0
+  resp <- 100 - 100 * (dose^h) / (ED50^h + dose^h)
   return(resp = resp)
 }
