@@ -1,6 +1,4 @@
 
-
-
 #' @title Accessing EC50 values of a td2pLL model
 #'
 #' @description For parameters of a td2pLL model
