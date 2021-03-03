@@ -41,6 +41,18 @@
 #'  `conv` (logical: If the pre-test converged).
 #'  `fit` Is, depending on the pre-test, either an object of class
 #'  `td2pLL` or a 2pLL fit, i.e. an object of class `drc`.
+#' @examples
+#' data(cytotox)
+#' data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+#' colnames(data_subset)[1] <- "time"
+#' TDR_res <- TDR(data = data_subset)
+#' # Pre-test rejected time dependency, so a regular 2pLL model is the result
+#' plot(TDR_res$fit)
+#' data_subset <- cytotox[cytotox$compound == "CHL", c("expo", "dose", "resp")]
+#' colnames(data_subset)[1] <- "time"
+#' TDR_res <- TDR(data = data_subset)
+#' # Pre-test rejected time dependency, so a regular 2pLL model is the result
+#' plot(TDR_res$fit, add_data = data_subset)
 
 TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
   stopifnot(is.data.frame(data))

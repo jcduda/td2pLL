@@ -27,7 +27,7 @@ fit_sep_2pLL <- function(data) {
   tryCatch(
     {
       drc::drm(resp ~ dose,
-        curveid = .data$time,
+        curveid = time,
         data = data,
         fct = drc::LL.2(upper = 100),
         pmodels = list(
@@ -39,7 +39,7 @@ fit_sep_2pLL <- function(data) {
     error = function(cond) {
       return(
         drc::drm(resp ~ dose,
-          curveid = .data$time,
+          curveid = time,
           control = drc::drmc(method = "Nelder-Mead"),
           data = data,
           fct = drc::LL.2(upper = 100),

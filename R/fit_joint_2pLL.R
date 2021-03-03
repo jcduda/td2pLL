@@ -13,8 +13,8 @@
 #' @details The function is a wrapper function using the LL2.2() argument
 #' from the [drc::drm()] function with the fixed asymptotes
 #' upper=100 and lower=0.
-#' As a first try, the BFGS method is used as optimization procedure.
-#' If this yields an error, the Nelder-Mead method is used as opitmization
+#' As a first try, the Nelder-Mead method is used as optimization procedure.
+#' If this yields an error, the BFGS method is used as opitmization
 #' method.
 #' @note When using the LL2.2() model from the [drc::drm()] function,
 #' the ED50 parameter is parametrized as log(ED50). We do this for improved
@@ -26,13 +26,13 @@ fit_joint_2pLL <- function(data) {
   tryCatch(
     {
       drc::drm(resp ~ dose,
-               data = data, fct = drc::LL2.2(upper = 100)
+               data = data, fct = drc::LL2.2(upper = 100),
+               control = drc::drmc(method = "Nelder-Mead")
       )
     },
     error = function(cond) {
       return(drc::drm(resp ~ dose,
-                      data = data, fct = drc::LL2.2(upper = 100),
-                      control = drc::drmc(method = "Nelder-Mead")
+                      data = data, fct = drc::LL2.2(upper = 100)
       ))
     }
   )

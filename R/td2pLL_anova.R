@@ -27,11 +27,18 @@
 #'  a simple 2pLL model is used in the fitting step that ignores (exposure)
 #'  time.
 #'  For more details see Duda et al. (2021).
+#' @examples
+#' data(cytotox)
+#' data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+#' colnames(data_subset)[1] <- "time"
+#' td2pLL_anova(data = data_subset)
 
 
 td2pLL_anova <- function(data, alpha = 0.05) {
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("time", "dose", "resp"))))
+
+  if(!(is.factor(data$time))) data$time <- as.factor(data$time)
 
   # dose-response curve with separate ED50 parameters, but shared h
   drm_seperate <- fit_sep_2pLL(data = data)

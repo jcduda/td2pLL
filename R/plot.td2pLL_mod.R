@@ -139,7 +139,7 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
     })
   } else {
     input_grid$resp <- predict(td2pLL_model, newdata = input_grid)
-    coefs <- coef(td2pLL_model)
+    td2pLL_coefs <- coef(td2pLL_model)
   }
 
   # make matrix-style input for plot_ly function
@@ -149,11 +149,10 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
     as.matrix()
 
   if (is.null(title)) {
-    title <- paste0(
-      "h = ", round(td2pLL_coefs["h"], 3),
-      "; delta = ", round(td2pLL_coefs["delta"], 3),
-      ";\n gamma = ", round(td2pLL_coefs["gamma"], 3),
-      "; c0 = ", round(td2pLL_coefs["c0"], 3)
+    title <- paste0("h = ", round(td2pLL_coefs["h"], 3) ,"; delta = ",
+                    round(td2pLL_coefs["delta"], 3),";\n gamma = ",
+                    round(td2pLL_coefs["gamma"], 3),"; c0 = ",
+                    round(td2pLL_coefs["c0"], 3)
     )
   }
 
