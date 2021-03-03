@@ -14,7 +14,7 @@ cytotox$compound %>% unique %>% length
 
 cytotox %>% select(compound, donor) %>% distinct %>%
   group_by(compound) %>% tally() %>% select(n) %>% table()
-# always 3 donorsper compound
+# always 3 donors per compound
 
 cytotox %>% select(compound, donor, expo) %>% distinct %>%
   group_by(compound, donor) %>% tally %>% ungroup %>% select(n) %>% table()
@@ -73,12 +73,12 @@ cytotox %>% group_by(compound, donor, expo, dose) %>% tally() %>%
 #
 # The refitting algorithm does the follwing:
 #
-# For a given compound, exposure time and donor, a dose-response curve (4pLL) 
+# For a given compound, exposure time and donor, a dose-response curve (4pLL)
 # is fitted.
 # The corresponding data is divided through the resulting left (upper) asymptote
 # (left_asymp)
 # and again multiplied by 100.
-# This way, the data is expected to better follow the assumption of having a 
+# This way, the data is expected to better follow the assumption of having a
 # left asymptote at 100 [percent].
 
 # left_asymp: Left asymptote calculated in refitting.
