@@ -64,7 +64,7 @@
 #' data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 #' colnames(data_subset)[1] <- "time"
 #' fit <- fit_td2pLL(data = data_subset)
-#' plot.td2pLL_mod(fit, add_data = data_subset)
+#' plot(fit, add_data = data_subset)
 
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,

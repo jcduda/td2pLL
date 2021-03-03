@@ -5,7 +5,7 @@
 \title{Plot interactive td2pLL models}
 \usage{
 \method{plot}{td2pLL_mod}(
-  td2pLL_model = NULL,
+  x = NULL,
   td2pLL_coefs = NULL,
   dose_lim = NULL,
   time_lim = NULL,
@@ -19,11 +19,12 @@
   zaxis_title = "Response",
   add_ED50_line = TRUE,
   ED50_line_col = "red",
-  ED50_line_width = 6
+  ED50_line_width = 6,
+  ...
 )
 }
 \arguments{
-\item{td2pLL_model}{('td2pLL' object)\cr
+\item{x}{('td2pLL' object)\cr
 A \code{td2pLL} object generatet via \link{fit_td2pLL}. If not
 provided, alternatively, \code{td2pLL_coefs} can be provided.}
 
@@ -70,6 +71,9 @@ Color for optionally added ED50 line.}
 
 \item{ED50_line_width}{(\code{numeric(1)})\cr
 Width for optionally added ED50 line.}
+
+\item{...}{\link{any} \cr
+Not used.}
 }
 \description{
 \code{plot.td2pLL_mod} is the plot method for the S3 class

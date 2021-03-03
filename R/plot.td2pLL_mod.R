@@ -1,5 +1,3 @@
-
-#' @export
 #' @title Plot interactive td2pLL models
 #'
 #' @description `plot.td2pLL_mod` is the plot method for the S3 class
@@ -18,7 +16,7 @@
 #'  For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #'  the entire procedure is explained in duda et al. (2021).
 #'  For plotting, the `plot_ly` function of package `plotly` is used.
-#' @param td2pLL_model ('td2pLL' object)\cr
+#' @param x ('td2pLL' object)\cr
 #'  A `td2pLL` object generatet via [fit_td2pLL]. If not
 #'  provided, alternatively, `td2pLL_coefs` can be provided.
 #' @param td2pLL_coefs (named `numeric(4)`)\cr
@@ -53,9 +51,10 @@
 #'  Color for optionally added ED50 line.
 #' @param ED50_line_width (`numeric(1)`)\cr
 #'  Width for optionally added ED50 line.
-
-
-plot.td2pLL_mod <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
+#' @param ... [any] \cr
+#'   Not used.
+#' @export
+plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
                         dose_lim = NULL,
                         time_lim = NULL,
                         add_data = NULL,
@@ -70,9 +69,11 @@ plot.td2pLL_mod <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
 
                         add_ED50_line = TRUE,
                         ED50_line_col = "red",
-                        ED50_line_width = 6
+                        ED50_line_width = 6,
+                        ...
                         ) {
 
+  td2pLL_model = x
   if(is.null(dose_lim)) {
     if(is.null(add_data)) {
       stop('dose_lim has to be specified. If xaxis_scale="log", then
