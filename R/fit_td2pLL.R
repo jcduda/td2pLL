@@ -58,7 +58,14 @@
 #'  Note that the fitting assumes the response data to be measured in percent,
 #'  i.e. ranges between 100 and 0 where it is assumed to be 100 at
 #'  dose=0 and decreases with increasing doses.
-#' @return An object of class `c("td2pLL", "nls")`.
+#' @return An object of class `c("td2pLL_mod", "nls")`.
+#' @examples
+#' data(cytotox)
+#' data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+#' colnames(data_subset)[1] <- "time"
+#' fit <- fit_td2pLL(data = data_subset)
+#' plot.td2pLL_mod(fit, add_data = data_subset)
+
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
                        upper = NULL, trace = FALSE) {
@@ -116,7 +123,7 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
              control = control
   )
 
-  attr(fit, "class") <- c("td2pLL", "nls") # to use plot.tdp2LL as method
+  attr(fit, "class") <- c("td2pLL_mod", "nls") # to use plot.tdp2LL as method
 
   return(fit)
 }

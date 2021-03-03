@@ -1,18 +1,19 @@
 
+#' @export
 #' @title Plot interactive td2pLL models
 #'
-#' @description `plot.td2pLL` is the plot method for the S3 class
-#' `td2pLL`.
+#' @description `plot.td2pLL_mod` is the plot method for the S3 class
+#' `td2pLL_mod`.
 #'  Model fits generated with the [fit_td2pLL()] function are of class
-#'  `c("td2pLL", "nls")` and can therefore be used for this plot method.
+#'  `c("td2pLL_mod", "nls")` and can therefore be used for this plot method.
 #'  If no fitted model but a through parameters pre-specified td2pLL model
 #'  shall be plotted, this can be done via the `td2pLL_coefs` argument.
 #'  For details on the `td2pLL` model, see [fit_td2pLL()].
 #'  If the [TDR()] function is used which performs the two-step
-#'  modeling pipeline, one can apply `plot.td2pLL()` to the `fit` list entry of the
+#'  modeling pipeline, one can apply `plot.td2pLL_mod()` to the `fit` list entry of the
 #'  object returned by [TDR()],
 #'  if fitting a `td2pLL` model was chosen in accordance
-#'  to the anova pre-test (see [td2pll_anova()]) calculated in [TDR()].
+#'  to the anova pre-test (see [td2pLL_anova()]) calculated in [TDR()].
 #' @details For further details on the td2pLL model, check [fit_td2pLL()].
 #'  For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #'  the entire procedure is explained in duda et al. (2021).
@@ -54,9 +55,9 @@
 #'  Width for optionally added ED50 line.
 
 
-plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
-                        dose_lim = c(1e-04, 1),
-                        time_lim = c(1, 7),
+plot.td2pLL_mod <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
+                        dose_lim = NULL,
+                        time_lim = NULL,
                         add_data = NULL,
                         n_grid = 100,
                         title = NULL,
@@ -71,6 +72,29 @@ plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
                         ED50_line_col = "red",
                         ED50_line_width = 6
                         ) {
+
+  if(is.null(dose_lim)) {
+    if(is.null(add_data)) {
+      stop('dose_lim has to be specified. If xaxis_scale="log", then
+      dose_lim cannot include 0. Set xaxis_scale="linear" if you want to include 0.')
+    }
+    if(xaxis_scale == "log") {
+      dose_lim <- c(min(add_data$dose[add_data$dose != 0]), max(add_data$dose))
+    }
+    if(xaxis_scale == "linear") {
+      dose_lim <- range(add_data$dose)
+    }
+  }
+
+  if(is.null(time_lim)) {
+    if(is.null(add_data)) {
+      stop('time_lim has to be specified if no add_data is provided.')
+    } else {
+      time_lim <- range(as.numeric(as.character(add_data$time)))
+    }
+
+  }
+
   time_seq <- seq(time_lim[1], time_lim[2], length.out = n_grid)
   dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)

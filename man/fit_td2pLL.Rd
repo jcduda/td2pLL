@@ -46,7 +46,7 @@ Optinal argument passed to nls function to trace (print) the
 optimization status at each iteration.}
 }
 \value{
-An object of class \code{c("td2pLL", "nls")}.
+An object of class \code{c("td2pLL_mod", "nls")}.
 }
 \description{
 \code{fit_td2pLL} is used to fit time-dose two-parameter
@@ -82,4 +82,11 @@ We use the \code{nls} function with the port algorithm.
 Note that the fitting assumes the response data to be measured in percent,
 i.e. ranges between 100 and 0 where it is assumed to be 100 at
 dose=0 and decreases with increasing doses.
+}
+\examples{
+data(cytotox)
+data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+colnames(data_subset)[1] <- "time"
+fit <- fit_td2pLL(data = data_subset)
+plot.td2pLL_mod(fit, add_data = data_subset)
 }

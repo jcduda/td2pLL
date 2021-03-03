@@ -39,5 +39,5 @@ with
 \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
 }
 \examples{
-td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)
+ td2pLL(time = 4, dose = 0.1, h = 2, gamma = 2.5, c0 = 0.1, delta = 0.3)
 }
