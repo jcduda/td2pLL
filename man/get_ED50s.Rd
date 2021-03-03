@@ -7,16 +7,17 @@
 get_ED50s(coefs, times)
 }
 \arguments{
-\item{coefs}{Named numeric vector containing the parameters of a td2pLL
-model containing the coefficients h, delta, gamma and c0.
-For an object of class td2pLL, these can be accessed via \code{coef()}.}
+\item{coefs}{(Named \code{numeric(4)})\cr
+Contains the parameters of a td2pLL, namely \code{h}, \code{delta}, \code{gamma} and \code{c0}.
+For an object of class \code{td2pLL}, these can be accessed via \code{coef()}.}
 
-\item{times}{Numeric vector of the times for which the ED50 shall be retrieved.
+\item{times}{(\code{numeric()})\cr
+Times at which the ED50 shall be retrieved.
 Entries must be greater than 0.}
 }
 \value{
-A data.frame with columns time and ED50 containing the ED50s at
-\code{times}.
+(\code{data.frame()})\cr
+A data.frame with columns \code{time} and \code{ED50}.
 }
 \description{
 For parameters of a td2pLL model

@@ -7,7 +7,9 @@
 interp_ED50(data = NULL)
 }
 \arguments{
-\item{data}{A data.frame with columns dose (numeric) and mean_resp (numeric)
+\item{data}{(numeric \code{data.frame()})\cr
+A data frame with columns \code{dose} for the dose values and \code{mean_resp}
+as (mean) response for a given dose value.
 of mean response data at given dose level.}
 }
 \value{
@@ -15,7 +17,7 @@ Returns the numeric \code{ED50_interp}.
 }
 \description{
 Calculates cheap starting parameter for the ED50 parameter of a
-2pLL model by interpolation. This function is used in get_starting_values.
+2pLL model by interpolation. This function is used in \link{get_starting_values}.
 }
 \details{
 The function assumes that the mean response values lay within 0 and

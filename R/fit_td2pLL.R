@@ -28,30 +28,36 @@
 #'    \item `c0` is the threshold or minimal value of the
 #'     ED50 value at all (exposure) times.
 #'  }
-#' @param data numeric data frame with columns named time, dose and resp.
-#' @param start Optional listwith named numeric startig values for
+#' @param data (numeric `data.frame()`)\cr
+#'  Data frame with columns named `time`, `dose` and `resp` storing numeric
+#'  data on time, dose and response measures, respectively.
+#' @param start (`list(4)`)\cr
+#'  Optional list with named numeric startig values for
 #' `h`, `delta`, `gamma` and `c0`. When no starting values
-#' are provided, the default is used which is 2 for `h`, 0 for `c0`
-#' and a linear interpolation procedure that leads to starting values for
-#' `delta` and `gamma`. For details, see
-#' [get_starting_values()].
-#' @param control Optional control argument for numerical optimization that will
-#' be passed to the `nls` function that is used here for non-linear
-#' fitting.
-#' @param lower Optional named list or named numeric vector for lower
-#' boundaries for the parameters `h`, `delta`, `gamma` and
-#' `c0` (in this order). As default, 1, -3*max(dose), -10 and 0 are used.
-#' @param upper Optional named list or named numeric vector for upper
-#' boundaries for the parameters `h`, `delta`, `gamma` and
-#' `c0` (in this order). As default, 10, 3*max(dose), 10 and 3*max(dose)
+#'  are provided, the default is used which is 2 for `h`, 0 for `c0`
+#'  and a linear interpolation procedure that leads to starting values for
+#'  `delta` and `gamma`. For details, see
+#'  [get_starting_values()].
+#' @param control (`list()`)\cr
+#'  Optional control argument for numerical optimization that will
+#'  be passed to the [nls] function that for non-linear fitting.
+#' @param lower (`list(4)` or `numeric(4)`)\cr
+#'  Optional named list or named numeric vector for lower
+#'  boundaries for the parameters `h`, `delta`, `gamma` and
+#'  `c0` (in this order). As default, 1, -3*max(dose), -10 and 0 are used.
+#' @param upper (`list(4)` or `numeric(4)`)\cr
+#'  Optional named list or named numeric vector for upper
+#'  boundaries for the parameters `h`, `delta`, `gamma` and
+#' `c0` (in this order). As default, 10, 3\*max(dose), 10 and 3\*max(dose)
 #'  are used.
-#' @param trace Ooptinal argument passed to nls function to trace (print) the
-#' optimization status at each iteration.
+#' @param trace (`logical(1)`)\cr
+#'  Optinal argument passed to nls function to trace (print) the
+#'  optimization status at each iteration.
 #' @details The non-linear fitting minimizes the sum of squared errors.
-#' We use the `nls` function with the port algorithm.
-#' Note that the fitting assumes the response data to be measured in percent,
-#' i.e. ranges between 100 and 0 where it is assumed to be 100 at
-#' dose=0 and decreases with increasing doses.
+#'  We use the `nls` function with the port algorithm.
+#'  Note that the fitting assumes the response data to be measured in percent,
+#'  i.e. ranges between 100 and 0 where it is assumed to be 100 at
+#'  dose=0 and decreases with increasing doses.
 #' @return An object of class `c("td2pLL", "nls")`.
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,

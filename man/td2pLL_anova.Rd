@@ -7,10 +7,11 @@
 td2pLL_anova(data, alpha = 0.05)
 }
 \arguments{
-\item{data}{data frame containing the response \code{resp}, \code{time} and
-\code{dose}}
+\item{data}{(\code{data.frame()})\cr
+Numeric data frame containing the response \code{resp}, \code{time} and \code{dose}.}
 
-\item{alpha}{Optional. alpha is 1 - confidence level.}
+\item{alpha}{(\code{numeric(1)})\cr
+The significance level.}
 }
 \description{
 In the time-dose-response (TDR) analysis pipeline,

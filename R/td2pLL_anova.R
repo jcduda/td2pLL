@@ -2,30 +2,31 @@
 #' @title ANOVA pre-test in the TDR analysis pipeline
 #'
 #' @description In the time-dose-response (TDR) analysis pipeline,
-#' data where in addition to dose (or concentration) and response, also
-#' time (e.g. exposure times) are measured, it is checked in a (nested) anova
-#' based pre-test if the td2pLL model is appropriate.
-#' That means, it is checked if the exposure time has an effect on the
-#' dose-response relationship or not.
-#' @param data data frame containing the response `resp`, `time` and
-#' `dose`
-#' @param alpha Optional. alpha is 1 - confidence level.
+#'  data where in addition to dose (or concentration) and response, also
+#'  time (e.g. exposure times) are measured, it is checked in a (nested) anova
+#'  based pre-test if the td2pLL model is appropriate.
+#'  That means, it is checked if the exposure time has an effect on the
+#'  dose-response relationship or not.
+#' @param data (`data.frame()`)\cr
+#'  Numeric data frame containing the response `resp`, `time` and `dose`.
+#' @param alpha (`numeric(1)`)\cr
+#'  The significance level.
 #' @details A nested anova is performed where a null model is tested against
-#' a full model. The null model is a regular 2pLL model with upper and
-#' lower limit 100 and 0, respectively.
-#' The (exposure) time variable is ignored and a single dose-response
-#' curve is fitted for the null model.
-#' In the full model, an individual ED50 value is calculated for each (exposure)
-#' time level. However, only one common `h` parameter is included in
-#' the full model.
-#' Hence, if the test rejects the null model, there seems to be significant
-#' evidence that (exposure) time has an effect on the dose-response
-#' relationship. Thus, the td2pLL model will be used during the fitting step
-#' of the TDR analysis pipeline. Otherwise, if there is no significant evidence
-#' of the influence of (exposure) time on the dose-response relationship,
-#' a simple 2pLL model is used in the fitting step that ignores (exposure)
-#' time.
-#' For more details see Duda et al. (2021).
+#'  a full model. The null model is a regular 2pLL model with upper and
+#'  lower limit 100 and 0, respectively.
+#'  The (exposure) time variable is ignored and a single dose-response
+#'  curve is fitted for the null model.
+#'  In the full model, an individual ED50 value is calculated for each (exposure)
+#'  time level. However, only one common `h` parameter is included in
+#'  the full model.
+#'  Hence, if the test rejects the null model, there seems to be significant
+#'  evidence that (exposure) time has an effect on the dose-response
+#'  relationship. Thus, the td2pLL model will be used during the fitting step
+#'  of the TDR analysis pipeline. Otherwise, if there is no significant evidence
+#'  of the influence of (exposure) time on the dose-response relationship,
+#'  a simple 2pLL model is used in the fitting step that ignores (exposure)
+#'  time.
+#'  For more details see Duda et al. (2021).
 
 
 td2pLL_anova <- function(data, alpha = 0.05) {

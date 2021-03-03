@@ -7,13 +7,16 @@
 TDR(data, alpha = 0.05, strict_stop = FALSE, ...)
 }
 \arguments{
-\item{data}{numeric data frame with columns named time, dose and resp. Note
-that the data is expected to be on the percent scale and there have values
+\item{data}{(Numeric \code{data.frame()})\cr
+Data frame with columns named \code{time}, \code{dose} and \code{resp}.\cr
+Note that the data is expected to be on the percent scale with values
 (roughly) within 0 and 100.}
 
-\item{alpha}{1- alpha is the confidence level for testing in step 1.}
+\item{alpha}{(\code{numeric(1)}in (0,1))\cr
+1- alpha is the confidence level for testing in step 1.}
 
-\item{strict_stop}{Optional logical. When \code{FALSE}, the default, then
+\item{strict_stop}{(\code{logical(1)})\cr
+Optional logical. When \code{FALSE}, the default, then
 in case of an error due to non-convergence in the pre-test, then in the
 second step a simple 2pLL model is fitted as if the pre-test was non-
 significant.
@@ -21,7 +24,7 @@ If \code{strict_stop} is \code{TRUE} and there is an error due to
 non-convergence in the pre-test, the procedure stops and no model is fitted
 in step 2.}
 
-\item{...}{Further aguments that can be passed on to \code{\link[=fit_td2pLL]{fit_td2pLL()}}.}
+\item{...}{Further arguments that can be passed on to \code{\link[=fit_td2pLL]{fit_td2pLL()}}.}
 }
 \value{
 A list with entries \code{pretest} and \code{fit}.

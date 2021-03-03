@@ -23,58 +23,67 @@
 )
 }
 \arguments{
-\item{td2pLL_model}{A td2pLL object generatet via \code{fit_td2pLL}. If not
+\item{td2pLL_model}{('td2pLL' object)\cr
+A \code{td2pLL} object generatet via \link{fit_td2pLL}. If not
 provided, alternatively, \code{td2pLL_coefs} can be provided.}
 
-\item{td2pLL_coefs}{Named numeric vector with parameters for h, delta, gamma and c0
-of the td2pLL model.}
+\item{td2pLL_coefs}{(named \code{numeric(4)})\cr
+If \code{td2pLL_model} is not provided, then \code{td2pLL_coefs} contains
+parameters for \code{h}, \code{delta}, \code{gamma} and \code{c0}
+of the \link{td2pLL} model.}
 
-\item{dose_lim}{Boundaries of the doses (xaxis) to be plotted. Default is
-\code{c(1e-4, 1)}.
+\item{dose_lim}{(\code{numeric(2)})\cr
+Boundaries of the doses (xaxis) for plotting.
 Note: If \code{xaxis_scale = "log"} (default), then \code{dose_lim} cannot include 0.
 If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.}
 
-\item{time_lim}{Boundaries for the time (xaxis). Default is \code{c(1, 7)}.}
+\item{time_lim}{(\code{numeric(2)})\cr
+Boundaries for the time (yaxis) for plotting.}
 
-\item{add_data}{Optional \code{data.frame} to add data points to the
+\item{add_data}{(\code{data.frame()})\cr
+Optional \code{data.frame} to add data points to the
 surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.}
 
-\item{n_grid}{\code{Integer}. \code{n_grid*n_grid} is the grid for surface evaluations
-that will be interpolated. Increase \code{n_grid} for smoother plot.}
+\item{n_grid}{(\code{integer(1)})\cr
+\code{n_grid*n_grid} is the \code{dose*time} grid for surface evaluations
+that will be interpolated. Increase \code{n_grid} for a smoother plot.}
 
-\item{title}{Optional plot title.}
+\item{title}{(\code{character(1)})\cr
+Optional plot title.}
 
-\item{xaxis_scale}{Scale of x-axis (Dose-Axis). Character of c("log", "linear", "-").
-If "-" is set, then plot_ly tries to guess which scale shall be used.}
+\item{xaxis_scale}{(\code{character(1)} in \code{c("log", "linear", "-")}\cr
+Scale of x-axis (dose-axis).\cr
+If \code{"-"} is set, then \code{\link[=plot_ly]{plot_ly()}} tries to guess which scale to use.}
 
-\item{yaxis_scale}{Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
-If "-" is set, then plot_ly tries to guess which scale shall be used.}
+\item{yaxis_scale}{(\code{character(1)} in \code{c("log", "linear", "-")}\cr
+Scale of y-axis (time-axis).\cr
+If \code{"-"} is set, then \code{\link[=plot_ly]{plot_ly()}} tries to guess which scale to use.}
 
-\item{xaxis_title}{Character Title for Dose-Axis.}
+\item{xaxis_title, yaxis_title, zaxis_title}{(\code{character(1)})\cr
+Title for dose-axis, time-axis and response-axis.}
 
-\item{yaxis_title}{Title for Time-Axis.}
+\item{add_ED50_line}{(\code{logical(1)})\cr
+Indicates if the line of ED50 values shall be annotated (=\code{TRUE}).}
 
-\item{zaxis_title}{Title for Response-Axis.}
+\item{ED50_line_col}{(\code{character(1)})\cr
+Color for optionally added ED50 line.}
 
-\item{add_ED50_line}{Logical. Indicates if the line of ED50 values shall be
-annotated.}
-
-\item{ED50_line_col}{Color for optionally added ED_50 line.}
-
-\item{ED50_line_width}{Width for optionally added ED_50 line.}
+\item{ED50_line_width}{(\code{numeric(1)})\cr
+Width for optionally added ED50 line.}
 }
 \description{
 \code{plot.td2pLL} is the plot method for the S3 class
 \code{td2pLL}.
-Model fits generated with the fit_td2pLL functions are of class
+Model fits generated with the \code{\link[=fit_td2pLL]{fit_td2pLL()}} function are of class
 \code{c("td2pLL", "nls")} and can therefore be used for this plot method.
 If no fitted model but a through parameters pre-specified td2pLL model
 shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
 For details on the \code{td2pLL} model, see \code{\link[=fit_td2pLL]{fit_td2pLL()}}.
-If the \code{TDR} function is used which performs the two-step
-modeling pipeline, one can apply plot.td2pLL to the \code{fit} list entry
-returned by TDR, if fitting a \code{td2pLL} model was chosen in accordance
-to the anova pre-test.
+If the \code{\link[=TDR]{TDR()}} function is used which performs the two-step
+modeling pipeline, one can apply \code{plot.td2pLL()} to the \code{fit} list entry of the
+object returned by \code{\link[=TDR]{TDR()}},
+if fitting a \code{td2pLL} model was chosen in accordance
+to the anova pre-test (see \code{\link[=td2pll_anova]{td2pll_anova()}}) calculated in \code{\link[=TDR]{TDR()}}.
 }
 \details{
 For further details on the td2pLL model, check \code{\link[=fit_td2pLL]{fit_td2pLL()}}.

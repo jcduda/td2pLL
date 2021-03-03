@@ -2,12 +2,13 @@
 % Please edit documentation in R/fit_sep_2pLL.R
 \name{fit_sep_2pLL}
 \alias{fit_sep_2pLL}
-\title{Fitting seperate 2pLL models for (exposure) times}
+\title{Fitting separate 2pLL models for (exposure) times}
 \usage{
 fit_sep_2pLL(data)
 }
 \arguments{
-\item{data}{Data frame containing the dose, resp and time variable.}
+\item{data}{(\code{data.frame()})\cr
+Data frame containing the \code{dose}, \code{resp} and \code{time} variable.}
 }
 \value{
 An object of class \code{drc}.

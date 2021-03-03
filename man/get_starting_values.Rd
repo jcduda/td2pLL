@@ -7,15 +7,19 @@
 get_starting_values(data, h_start = 2, c0_start = 0)
 }
 \arguments{
-\item{data}{data frame with numeric columns named time, dose and resp}
+\item{data}{(numeric \code{data.frame()})\cr
+Data frame with numeric columns named \code{time}, \code{dose} and \code{resp}.}
 
-\item{h_start}{optional starting value for the \code{h} parameter.
+\item{h_start}{(\code{numeric(1)})\cr
+Optional starting value for the \code{h} parameter.
 Default is 2.}
 
-\item{c0_start}{optional starting value for the theshold parameter \code{c0}.
+\item{c0_start}{(\code{numeric(1)})\cr
+Optional starting value for the trheshold parameter \code{c0}.
 Default is 0.}
 }
 \value{
+(\code{list(4)})\cr
 List with starting values for h, delta, gamma and c0.
 }
 \description{

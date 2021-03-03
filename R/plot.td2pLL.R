@@ -3,47 +3,57 @@
 #'
 #' @description `plot.td2pLL` is the plot method for the S3 class
 #' `td2pLL`.
-#' Model fits generated with the fit_td2pLL functions are of class
-#' `c("td2pLL", "nls")` and can therefore be used for this plot method.
-#' If no fitted model but a through parameters pre-specified td2pLL model
-#' shall be plotted, this can be done via the `td2pLL_coefs` argument.
-#' For details on the `td2pLL` model, see [fit_td2pLL()].
-#' If the `TDR` function is used which performs the two-step
-#' modeling pipeline, one can apply plot.td2pLL to the `fit` list entry
-#' returned by TDR, if fitting a `td2pLL` model was chosen in accordance
-#' to the anova pre-test.
+#'  Model fits generated with the [fit_td2pLL()] function are of class
+#'  `c("td2pLL", "nls")` and can therefore be used for this plot method.
+#'  If no fitted model but a through parameters pre-specified td2pLL model
+#'  shall be plotted, this can be done via the `td2pLL_coefs` argument.
+#'  For details on the `td2pLL` model, see [fit_td2pLL()].
+#'  If the [TDR()] function is used which performs the two-step
+#'  modeling pipeline, one can apply `plot.td2pLL()` to the `fit` list entry of the
+#'  object returned by [TDR()],
+#'  if fitting a `td2pLL` model was chosen in accordance
+#'  to the anova pre-test (see [td2pll_anova()]) calculated in [TDR()].
 #' @details For further details on the td2pLL model, check [fit_td2pLL()].
-#' For details on the ANOVA used, see [td2pLL_anova()]. More over,
-#' the entire procedure is explained in duda et al. (2021).
-#' For plotting, the `plot_ly` function of package `plotly` is used.
-#' @param td2pLL_model A td2pLL object generatet via `fit_td2pLL`. If not
-#' provided, alternatively, `td2pLL_coefs` can be provided.
-#' @param td2pLL_coefs Named numeric vector with parameters for h, delta, gamma and c0
-#' of the td2pLL model.
-#' @param dose_lim Boundaries of the doses (xaxis) to be plotted. Default is
-#' `c(1e-4, 1)`.
-#' Note: If `xaxis_scale = "log"` (default), then `dose_lim` cannot include 0.
-#' If `dose_lim` shall include the 0, set `xaxis_scale = "linear"`.
-#' @param time_lim Boundaries for the time (xaxis). Default is `c(1, 7)`.
-#' @param add_data Optional `data.frame` to add data points to the
-#' surface plot. Must include columns `dose`, `time` and `resp`.
-#' @param n_grid `Integer`. `n_grid*n_grid` is the grid for surface evaluations
-#' that will be interpolated. Increase `n_grid` for smoother plot.
-#' @param title Optional plot title.
-#' @param xaxis_scale Scale of x-axis (Dose-Axis). Character of c("log", "linear", "-").
-#' If "-" is set, then plot_ly tries to guess which scale shall be used.
-#' @param yaxis_scale Scale of y-axis (Time-Axis). Character of c("log", "linear", "-").
-#' If "-" is set, then plot_ly tries to guess which scale shall be used.
-#' @param xaxis_title Character Title for Dose-Axis.
-#' @param yaxis_title Title for Time-Axis.
-#' @param zaxis_title Title for Response-Axis.
-#' @param add_ED50_line Logical. Indicates if the line of ED50 values shall be
-#' annotated.
-#' @param ED50_line_col Color for optionally added ED_50 line.
-#' @param ED50_line_width Width for optionally added ED_50 line.
+#'  For details on the ANOVA used, see [td2pLL_anova()]. More over,
+#'  the entire procedure is explained in duda et al. (2021).
+#'  For plotting, the `plot_ly` function of package `plotly` is used.
+#' @param td2pLL_model ('td2pLL' object)\cr
+#'  A `td2pLL` object generatet via [fit_td2pLL]. If not
+#'  provided, alternatively, `td2pLL_coefs` can be provided.
+#' @param td2pLL_coefs (named `numeric(4)`)\cr
+#'  If `td2pLL_model` is not provided, then `td2pLL_coefs` contains
+#'  parameters for `h`, `delta`, `gamma` and `c0`
+#'  of the [td2pLL] model.
+#' @param dose_lim (`numeric(2)`)\cr
+#'  Boundaries of the doses (xaxis) for plotting.
+#'  Note: If `xaxis_scale = "log"` (default), then `dose_lim` cannot include 0.
+#'  If `dose_lim` shall include the 0, set `xaxis_scale = "linear"`.
+#' @param time_lim (`numeric(2)`)\cr
+#'  Boundaries for the time (yaxis) for plotting.
+#' @param add_data (`data.frame()`)\cr
+#'  Optional `data.frame` to add data points to the
+#'  surface plot. Must include columns `dose`, `time` and `resp`.
+#' @param n_grid (`integer(1)`)\cr
+#'  `n_grid*n_grid` is the `dose*time` grid for surface evaluations
+#'  that will be interpolated. Increase `n_grid` for a smoother plot.
+#' @param title (`character(1)`)\cr
+#'  Optional plot title.
+#' @param xaxis_scale (`character(1)` in `c("log", "linear", "-")`\cr
+#'  Scale of x-axis (dose-axis).\cr
+#'  If `"-"` is set, then [plot_ly()] tries to guess which scale to use.
+#' @param yaxis_scale (`character(1)` in `c("log", "linear", "-")`\cr
+#'  Scale of y-axis (time-axis).\cr
+#'  If `"-"` is set, then [plot_ly()] tries to guess which scale to use.
+#' @param xaxis_title,yaxis_title,zaxis_title (`character(1)`)\cr
+#'  Title for dose-axis, time-axis and response-axis.
+#' @param add_ED50_line (`logical(1)`)\cr
+#'  Indicates if the line of ED50 values shall be annotated (=`TRUE`).
+#' @param ED50_line_col (`character(1)`)\cr
+#'  Color for optionally added ED50 line.
+#' @param ED50_line_width (`numeric(1)`)\cr
+#'  Width for optionally added ED50 line.
 
 
-# td2pLL_model <- model1
 plot.td2pLL <- function(td2pLL_model = NULL, td2pLL_coefs = NULL,
                         dose_lim = c(1e-04, 1),
                         time_lim = c(1, 7),

@@ -7,7 +7,8 @@
 fit_joint_2pLL(data)
 }
 \arguments{
-\item{data}{data frame containing the dose and resp variable}
+\item{data}{(\code{data.frame()})\cr
+Contains the \code{dose} and \code{resp} variable..}
 }
 \value{
 An object of class \code{drc}.

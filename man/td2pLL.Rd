@@ -7,26 +7,32 @@
 td2pLL(time, dose, h, gamma, c0, delta)
 }
 \arguments{
-\item{time}{numeric for the time value where the response shall be calculated}
+\item{time}{(\code{numeric(1)})\cr
+Time value at which the response shall be calculated. Must be greater than 0.}
 
 \item{dose}{numeric for the dose (or concentration) value where the response
 shall be calculated}
 
-\item{h}{The \code{h} parameter of the model}
+\item{h}{(\code{numeric(1)})\cr
+The \code{h} parameter of the model.}
 
-\item{gamma}{The \code{gamma} parameter of the model}
+\item{gamma}{(\code{numeric(1)})\cr
+The \code{gamma} parameter of the model.}
 
-\item{c0}{The \code{c0} parameter of the model}
+\item{c0}{(\code{numeric(1)})
+The \code{c0} parameter of the model.}
 
-\item{delta}{The \code{delta} parameter of the model}
+\item{delta}{(\code{numeric(1)})\cr
+The \code{delta} parameter of the model.}
 }
 \value{
+(\code{numeric(1)})\cr
 The response value of the model \emph{in percent} at the given \code{time} and
 \code{dose} value.
 }
 \description{
 \code{td2pLL} returns the response value of a fully specified
-time-dose two-parameter log-logistic model at a certain time and dose
+time-dose two-parameter log-logistic model at a certain time (t) and dose (d)
 value:
 \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
 with

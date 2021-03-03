@@ -14,29 +14,35 @@ fit_td2pLL(
 )
 }
 \arguments{
-\item{data}{numeric data frame with columns named time, dose and resp.}
+\item{data}{(numeric \code{data.frame()})\cr
+Data frame with columns named \code{time}, \code{dose} and \code{resp} storing numeric
+data on time, dose and response measures, respectively.}
 
-\item{start}{Optional listwith named numeric startig values for
+\item{start}{(\code{list(4)})\cr
+Optional list with named numeric startig values for
 \code{h}, \code{delta}, \code{gamma} and \code{c0}. When no starting values
 are provided, the default is used which is 2 for \code{h}, 0 for \code{c0}
 and a linear interpolation procedure that leads to starting values for
 \code{delta} and \code{gamma}. For details, see
 \code{\link[=get_starting_values]{get_starting_values()}}.}
 
-\item{control}{Optional control argument for numerical optimization that will
-be passed to the \code{nls} function that is used here for non-linear
-fitting.}
+\item{control}{(\code{list()})\cr
+Optional control argument for numerical optimization that will
+be passed to the \link{nls} function that for non-linear fitting.}
 
-\item{lower}{Optional named list or named numeric vector for lower
+\item{lower}{(\code{list(4)} or \code{numeric(4)})\cr
+Optional named list or named numeric vector for lower
 boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
 \code{c0} (in this order). As default, 1, -3*max(dose), -10 and 0 are used.}
 
-\item{upper}{Optional named list or named numeric vector for upper
+\item{upper}{(\code{list(4)} or \code{numeric(4)})\cr
+Optional named list or named numeric vector for upper
 boundaries for the parameters \code{h}, \code{delta}, \code{gamma} and
-\code{c0} (in this order). As default, 10, 3\emph{max(dose), 10 and 3}max(dose)
+\code{c0} (in this order). As default, 10, 3\*max(dose), 10 and 3\*max(dose)
 are used.}
 
-\item{trace}{Ooptinal argument passed to nls function to trace (print) the
+\item{trace}{(\code{logical(1)})\cr
+Optinal argument passed to nls function to trace (print) the
 optimization status at each iteration.}
 }
 \value{

@@ -8,7 +8,8 @@
 #' a single, 'joint', dose-response curve is fitted to the data,
 #' ignoring the information of exposure time.
 #'
-#' @param data data frame containing the dose and resp variable
+#' @param data (`data.frame()`)\cr
+#'  Contains the `dose` and `resp` variable..
 #' @details The function is a wrapper function using the LL2.2() argument
 #' from the [drc::drm()] function with the fixed asymptotes
 #' upper=100 and lower=0.

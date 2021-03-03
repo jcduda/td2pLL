@@ -2,8 +2,10 @@
 # function: interp_ED50
 #' @title Starting value calculation for ED50 parameter
 #' @description Calculates cheap starting parameter for the ED50 parameter of a
-#'  2pLL model by interpolation. This function is used in get_starting_values.
-#' @param  data A data.frame with columns dose (numeric) and mean_resp (numeric)
+#'  2pLL model by interpolation. This function is used in [get_starting_values].
+#' @param  data (numeric `data.frame()`)\cr
+#'  A data frame with columns `dose` for the dose values and `mean_resp`
+#'  as (mean) response for a given dose value.
 #'  of mean response data at given dose level.
 #' @details The function assumes that the mean response values lay within 0 and
 #'  100, i.e. have percent units.
