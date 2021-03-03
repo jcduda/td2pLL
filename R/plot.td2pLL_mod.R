@@ -16,8 +16,8 @@
 #'  For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #'  the entire procedure is explained in duda et al. (2021).
 #'  For plotting, the `plot_ly` function of package `plotly` is used.
-#' @param x ('td2pLL' object)\cr
-#'  A `td2pLL` object generatet via [fit_td2pLL]. If not
+#' @param x (`td2pLL_mod` object)\cr
+#'  A `td2pLL_mod` object generatet via [fit_td2pLL]. If not
 #'  provided, alternatively, `td2pLL_coefs` can be provided.
 #' @param td2pLL_coefs (named `numeric(4)`)\cr
 #'  If `td2pLL_model` is not provided, then `td2pLL_coefs` contains
@@ -53,6 +53,14 @@
 #'  Width for optionally added ED50 line.
 #' @param ... [any] \cr
 #'   Not used.
+#' @examples
+#' data(cytotox)
+#' data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+#' colnames(data_subset)[1] <- "time"
+#' fit <- fit_td2pLL(data = data_subset)
+#' plot(fit, add_data = data_subset)
+#' plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
+#' dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
 #' @export
 plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
                         dose_lim = NULL,
@@ -74,6 +82,7 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
                         ) {
 
   td2pLL_model = x
+
   if(is.null(dose_lim)) {
     if(is.null(add_data)) {
       stop('dose_lim has to be specified. If xaxis_scale="log", then
@@ -97,7 +106,12 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
   }
 
   time_seq <- seq(time_lim[1], time_lim[2], length.out = n_grid)
-  dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
+  if(xaxis_scale == "log") {
+    dose_seq <- c(0, exp(seq(log(dose_lim[1]), log(dose_lim[2]), length.out = n_grid)))
+  } else {
+    dose_seq <- seq(dose_lim[1], dose_lim[2], length.out = n_grid)
+  }
+
   # seq(dose_lim[1], dose_lim[2], length.out = n_grid)
 
   input_grid <- expand.grid(time = time_seq, dose = dose_seq) %>%
@@ -117,10 +131,10 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
       td2pLL(
         dose = x["dose"],
         time = x["time"],
-        h = coefs["h"],
-        delta = coefs["delta"],
-        gamma = coefs["gamma"],
-        c0 = coefs["c0"]
+        h = td2pLL_coefs["h"],
+        delta = td2pLL_coefs["delta"],
+        gamma = td2pLL_coefs["gamma"],
+        c0 = td2pLL_coefs["c0"]
       )
     })
   } else {
@@ -136,8 +150,10 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
 
   if (is.null(title)) {
     title <- paste0(
-      "h = ", round(coefs["h"], 3), "; delta = ", round(coefs["delta"], 3), ";\n gamma = ",
-      round(coefs["gamma"], 3), "; c0 = ", round(coefs["c0"], 3)
+      "h = ", round(td2pLL_coefs["h"], 3),
+      "; delta = ", round(td2pLL_coefs["delta"], 3),
+      ";\n gamma = ", round(td2pLL_coefs["gamma"], 3),
+      "; c0 = ", round(td2pLL_coefs["c0"], 3)
     )
   }
 
@@ -178,8 +194,11 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
   if (add_ED50_line) {
     add_ED50 <- data.frame(
       time = time_seq,
-      ED50 = coefs["delta"] * time_seq^(-coefs["gamma"]) + coefs["c0"]
-    )
+      ED50 = td2pLL_coefs["delta"] * time_seq^(-td2pLL_coefs["gamma"]) +
+        td2pLL_coefs["c0"]
+    ) %>% dplyr::filter(
+      ED50 > dose_lim[1] & ED50 < dose_lim[2]
+      )
 
     # add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
     add_ED50$resp <- 50
