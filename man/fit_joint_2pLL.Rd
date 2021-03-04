@@ -26,8 +26,8 @@ ignoring the information of exposure time.
 The function is a wrapper function using the LL2.2() argument
 from the \code{\link[drc:drm]{drc::drm()}} function with the fixed asymptotes
 upper=100 and lower=0.
-As a first try, the BFGS method is used as optimization procedure.
-If this yields an error, the Nelder-Mead method is used as opitmization
+As a first try, the Nelder-Mead method is used as optimization procedure.
+If this yields an error, the BFGS method is used as opitmization
 method.
 }
 \note{
