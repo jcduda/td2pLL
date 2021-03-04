@@ -22,7 +22,7 @@
 
 
 fit_sep_2pLL <- function(data) {
-
+  time <- NULL
   data$time <- as.factor(data$time)
   tryCatch(
     {
