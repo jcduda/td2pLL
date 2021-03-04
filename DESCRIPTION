@@ -29,3 +29,7 @@ Imports:
     rlang (>= 0.4.7)
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
