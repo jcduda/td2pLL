@@ -123,6 +123,8 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
              control = control
   )
 
+  fit$orig_data <- data
+
   attr(fit, "class") <- c("td2pLL_mod", "nls") # to use plot.tdp2LL as method
 
   return(fit)

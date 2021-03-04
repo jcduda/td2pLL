@@ -51,8 +51,9 @@
 #' data_subset <- cytotox[cytotox$compound == "CHL", c("expo", "dose", "resp")]
 #' colnames(data_subset)[1] <- "time"
 #' TDR_res <- TDR(data = data_subset)
-#' # Pre-test rejected time dependency, so a regular 2pLL model is the result
-#' plot(TDR_res$fit, add_data = data_subset)
+#' # Pre-test rejected time dependency, so a  td2pLL model is the result
+#' # Note that the interactive Plot is in the Viewer panel, not in the Plots panel
+#' plot(TDR_res$fit)
 
 TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
   stopifnot(is.data.frame(data))

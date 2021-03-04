@@ -56,3 +56,17 @@ For further details on the td2pLL model, check \code{\link[=fit_td2pLL]{fit_td2p
 For details on the ANOVA used, see \code{\link[=td2pLL_anova]{td2pLL_anova()}}. More over,
 the entire procedure is explained in duda et al. (2021).
 }
+\examples{
+data(cytotox)
+data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+colnames(data_subset)[1] <- "time"
+TDR_res <- TDR(data = data_subset)
+# Pre-test rejected time dependency, so a regular 2pLL model is the result
+plot(TDR_res$fit)
+data_subset <- cytotox[cytotox$compound == "CHL", c("expo", "dose", "resp")]
+colnames(data_subset)[1] <- "time"
+TDR_res <- TDR(data = data_subset)
+# Pre-test rejected time dependency, so a  td2pLL model is the result
+# Note that the interactive Plot is in the Viewer panel, not in the Plots panel
+plot(TDR_res$fit)
+}

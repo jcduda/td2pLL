@@ -9,7 +9,8 @@
   td2pLL_coefs = NULL,
   dose_lim = NULL,
   time_lim = NULL,
-  add_data = NULL,
+  add_model_data = TRUE,
+  add_ext_data = NULL,
   n_grid = 100,
   title = NULL,
   xaxis_scale = "log",
@@ -24,8 +25,8 @@
 )
 }
 \arguments{
-\item{x}{('td2pLL' object)\cr
-A \code{td2pLL} object generatet via \link{fit_td2pLL}. If not
+\item{x}{(\code{td2pLL_mod} object)\cr
+A \code{td2pLL_mod} object generatet via \link{fit_td2pLL}. If not
 provided, alternatively, \code{td2pLL_coefs} can be provided.}
 
 \item{td2pLL_coefs}{(named \code{numeric(4)})\cr
@@ -41,8 +42,12 @@ If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.}
 \item{time_lim}{(\code{numeric(2)})\cr
 Boundaries for the time (yaxis) for plotting.}
 
-\item{add_data}{(\code{data.frame()})\cr
-Optional \code{data.frame} to add data points to the
+\item{add_model_data}{(\code{logical(1)})\cr
+By default, if \code{x} is a \code{td2pLL_mod} object, the original data
+used for the fit are added to the plot.}
+
+\item{add_ext_data}{(\code{data.frame()})\cr
+Optional numeric \code{data.frame} to add data points to the
 surface plot. Must include columns \code{dose}, \code{time} and \code{resp}.}
 
 \item{n_grid}{(\code{integer(1)})\cr
@@ -94,4 +99,13 @@ For further details on the td2pLL model, check \code{\link[=fit_td2pLL]{fit_td2p
 For details on the ANOVA used, see \code{\link[=td2pLL_anova]{td2pLL_anova()}}. More over,
 the entire procedure is explained in duda et al. (2021).
 For plotting, the \code{plot_ly} function of package \code{plotly} is used.
+}
+\examples{
+data(cytotox)
+data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+colnames(data_subset)[1] <- "time"
+fit <- fit_td2pLL(data = data_subset)
+plot(fit)
+plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
+dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
 }
