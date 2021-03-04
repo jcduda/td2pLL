@@ -39,3 +39,9 @@ a simple 2pLL model is used in the fitting step that ignores (exposure)
 time.
 For more details see Duda et al. (2021).
 }
+\examples{
+data(cytotox)
+data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
+colnames(data_subset)[1] <- "time"
+td2pLL_anova(data = data_subset)
+}

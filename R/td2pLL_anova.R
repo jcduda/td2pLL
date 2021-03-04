@@ -1,4 +1,5 @@
 
+#' @export
 #' @title ANOVA pre-test in the TDR analysis pipeline
 #'
 #' @description In the time-dose-response (TDR) analysis pipeline,
