@@ -64,6 +64,8 @@
 #' colnames(data_subset)[1] <- "time"
 #' fit <- fit_td2pLL(data = data_subset)
 #' plot(fit)
+#' #td2pLL:::plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
+#' #dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
 #' plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
 #' dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
 
