@@ -6,7 +6,6 @@
 \usage{
 \method{plot}{td2pLL_mod}(
   x = NULL,
-  td2pLL_coefs = NULL,
   dose_lim = NULL,
   time_lim = NULL,
   add_model_data = TRUE,
@@ -29,11 +28,6 @@
 A \code{td2pLL_mod} object generatet via \link{fit_td2pLL}. If not
 provided, alternatively, \code{td2pLL_coefs} can be provided.}
 
-\item{td2pLL_coefs}{(named \code{numeric(4)})\cr
-If \code{td2pLL_model} is not provided, then \code{td2pLL_coefs} contains
-parameters for \code{h}, \code{delta}, \code{gamma} and \code{c0}
-of the \link{td2pLL} model.}
-
 \item{dose_lim}{(\code{numeric(2)})\cr
 Boundaries of the doses (xaxis) for plotting.
 Note: If \code{xaxis_scale = "log"} (default), then \code{dose_lim} cannot include 0.
@@ -43,7 +37,7 @@ If \code{dose_lim} shall include the 0, set \code{xaxis_scale = "linear"}.}
 Boundaries for the time (yaxis) for plotting.}
 
 \item{add_model_data}{(\code{logical(1)})\cr
-By default, if \code{x} is a \code{td2pLL_mod} object, the original data
+By default the original data
 used for the fit are added to the plot.}
 
 \item{add_ext_data}{(\code{data.frame()})\cr
@@ -86,7 +80,7 @@ Not used.}
 Model fits generated with the \code{\link[=fit_td2pLL]{fit_td2pLL()}} function are of class
 \code{c("td2pLL_mod", "nls")} and can therefore be used for this plot method.
 If no fitted model but a through parameters pre-specified td2pLL model
-shall be plotted, this can be done via the \code{td2pLL_coefs} argument.
+shall be plotted, this can be done via the \link{plot_td2pLL}.
 For details on the \code{td2pLL} model, see \code{\link[=fit_td2pLL]{fit_td2pLL()}}.
 If the \code{\link[=TDR]{TDR()}} function is used which performs the two-step
 modeling pipeline, one can apply \code{plot.td2pLL_mod()} to the \code{fit} list entry of the
@@ -106,8 +100,11 @@ data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
 plot(fit)
-#td2pLL:::plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
-#dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
-plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
-dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
+plot(fit, xaxis_scale = "linear")
+plot(fit, title = "td2pLL model of Compound ASP", dose_lim = c(0.01, 100))
+plot(fit, xaxis_scale = "linear", dose_lim = c(0, 15))
+# If you want to see how the model looks like for certain parameters,
+# use [plot_td2pLL]
+plot_td2pLL(td2pLL_coefs = c(h = 2, delta = 3, gamma = 1.5, c0 = 1),
+ dose_lim = c(0.01, 10), time_lim = c(1, 5))
 }

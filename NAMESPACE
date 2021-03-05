@@ -3,6 +3,7 @@
 S3method(plot,td2pLL_mod)
 export(TDR)
 export(fit_td2pLL)
+export(plot_td2pLL)
 export(td2pLL)
 export(td2pLL_anova)
 importFrom(dplyr,'%>%')

@@ -7,7 +7,7 @@
 #'  Model fits generated with the [fit_td2pLL()] function are of class
 #'  `c("td2pLL_mod", "nls")` and can therefore be used for this plot method.
 #'  If no fitted model but a through parameters pre-specified td2pLL model
-#'  shall be plotted, this can be done via the `td2pLL_coefs` argument.
+#'  shall be plotted, this can be done via the [plot_td2pLL].
 #'  For details on the `td2pLL` model, see [fit_td2pLL()].
 #'  If the [TDR()] function is used which performs the two-step
 #'  modeling pipeline, one can apply `plot.td2pLL_mod()` to the `fit` list entry of the
@@ -21,10 +21,6 @@
 #' @param x (`td2pLL_mod` object)\cr
 #'  A `td2pLL_mod` object generatet via [fit_td2pLL]. If not
 #'  provided, alternatively, `td2pLL_coefs` can be provided.
-#' @param td2pLL_coefs (named `numeric(4)`)\cr
-#'  If `td2pLL_model` is not provided, then `td2pLL_coefs` contains
-#'  parameters for `h`, `delta`, `gamma` and `c0`
-#'  of the [td2pLL] model.
 #' @param dose_lim (`numeric(2)`)\cr
 #'  Boundaries of the doses (xaxis) for plotting.
 #'  Note: If `xaxis_scale = "log"` (default), then `dose_lim` cannot include 0.
@@ -32,7 +28,7 @@
 #' @param time_lim (`numeric(2)`)\cr
 #'  Boundaries for the time (yaxis) for plotting.
 #' @param add_model_data (`logical(1)`)\cr
-#'  By default, if `x` is a `td2pLL_mod` object, the original data
+#'  By default the original data
 #'  used for the fit are added to the plot.
 #' @param add_ext_data (`data.frame()`)\cr
 #'  Optional numeric `data.frame` to add data points to the
@@ -64,12 +60,16 @@
 #' colnames(data_subset)[1] <- "time"
 #' fit <- fit_td2pLL(data = data_subset)
 #' plot(fit)
-#' #td2pLL:::plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
-#' #dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
-#' plot.td2pLL_mod(x=NULL, td2pLL_coefs = c(h = 2, delta = 5, gamma = 2, c0=1),
-#' dose_lim = c(0, 10), time_lim = c(1, 2), xaxis_scale = "linear", n_grid = 200)
+#' plot(fit, xaxis_scale = "linear")
+#' plot(fit, title = "td2pLL model of Compound ASP", dose_lim = c(0.01, 100))
+#' plot(fit, xaxis_scale = "linear", dose_lim = c(0, 15))
+#' # If you want to see how the model looks like for certain parameters,
+#' # use [plot_td2pLL]
+#' plot_td2pLL(td2pLL_coefs = c(h = 2, delta = 3, gamma = 1.5, c0 = 1),
+#'  dose_lim = c(0.01, 10), time_lim = c(1, 5))
 
-plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
+
+plot.td2pLL_mod <- function(x = NULL,
                         dose_lim = NULL,
                         time_lim = NULL,
                         add_model_data = TRUE,
@@ -100,7 +100,7 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
     }
     if(xaxis_scale == "log") {
       if(!is.null(x)){
-        dose_lim <- c(min(x$orig_data$dose[x$orig_data$dos != 0]), max(x$orig_data$dose))
+        dose_lim <- c(min(x$orig_data$dose[x$orig_data$dose != 0]), max(x$orig_data$dose))
       }
       if(is.null(x) & !(is.null(add_ext_data))) {
         dose_lim <- c(min(add_ext_data$dose[add_ext_data$dose != 0]), max(add_ext_data$dose))
@@ -144,30 +144,18 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
   input_grid <- expand.grid(time = time_seq, dose = dose_seq) %>%
     as.data.frame()
 
-  if (is.null(td2pLL_model) & is.null(td2pLL_coefs)) {
-    stop("Either the td2pLL_model argument or the td2pLL_coefs argument must be specified.")
+  if (is.null(td2pLL_model)) {
+    stop("td2pLL_model argument must be specified.")
   }
 
-  if (!(is.null(td2pLL_model)) & !(is.null(td2pLL_coefs))) {
-    stop("Only td2pLL_model or td2pLL_coefs can be specified, not both.")
+  if(!(class(td2pLL_model)[1] == "td2pLL_mod")){
+    stop("td2pLL_model has to be an td2pLL_mod object generated with fit_td2pLL.")
   }
 
   # calculate the responses at each grid-point
-  if (!is.null(td2pLL_coefs)) {
-    input_grid$resp <- apply(input_grid, 1, function(x) {
-      td2pLL(
-        dose = x["dose"],
-        time = x["time"],
-        h = td2pLL_coefs["h"],
-        delta = td2pLL_coefs["delta"],
-        gamma = td2pLL_coefs["gamma"],
-        c0 = td2pLL_coefs["c0"]
-      )
-    })
-  } else {
-    input_grid$resp <- predict(td2pLL_model, newdata = input_grid)
-    td2pLL_coefs <- coef(td2pLL_model)
-  }
+  input_grid$resp <- predict(td2pLL_model, newdata = input_grid)
+  td2pLL_coefs <- coef(td2pLL_model)
+
 
   # make matrix-style input for plot_ly function
   input_grid <- input_grid %>%
@@ -175,81 +163,30 @@ plot.td2pLL_mod <- function(x = NULL, td2pLL_coefs = NULL,
     dplyr::select(-.data$time) %>%
     as.matrix()
 
-  if (is.null(title)) {
-    title <- paste0("h = ", round(td2pLL_coefs["h"], 3) ,"; delta = ",
-                    round(td2pLL_coefs["delta"], 3),";\n gamma = ",
-                    round(td2pLL_coefs["gamma"], 3),"; c0 = ",
-                    round(td2pLL_coefs["c0"], 3)
-    )
-  }
+
+  if (is.null(title)) title <- td2pLL_plot_title(td2pLL_coefs)
 
   # actual plotting:
-
-  res_plot <- plotly::plot_ly(
-    x = dose_seq, y = time_seq, z = input_grid,
-    type = "surface"
-  ) %>%
-    plotly::layout(
-      title = title,
-      scene = list(
-        xaxis = list(
-          title = xaxis_title,
-          tick0 = 0,
-          type = xaxis_scale
-        ),
-        yaxis = list(
-          title = yaxis_title,
-          type = yaxis_scale
-        ),
-        zaxis = list(title = zaxis_title)
-      )
-    )
+  res_plot <- td2pLL_plot_basis(dose_seq, time_seq, input_grid, xaxis_title,
+                                xaxis_scale, yaxis_title, yaxis_scale, zaxis_title,
+                                title)
 
   # add original data used for model fit, if a model fit is provided, by default
+  if (add_model_data == TRUE) {
+    res_plot <- td2pLL_plot_add_data(plotly_plot = res_plot,
+                                     data_to_add = td2pLL_model$orig_data)
+    }
 
-  if (!(is.null(x)) & add_model_data == TRUE) {
-    res_plot <- res_plot %>% plotly::add_markers(
-      x = td2pLL_model$orig_data$dose,
-      y = td2pLL_model$orig_data$time,
-      z = td2pLL_model$orig_data$resp,
-      marker = list(size = 2),
-      showlegend = F
-    )
-  }
-
-  # add external data points, if provided
   if (!is.null(add_ext_data)) {
-    res_plot <- res_plot %>% plotly::add_markers(
-      x = add_ext_data$dose,
-      y = add_ext_data$time,
-      z = add_ext_data$resp,
-      marker = list(size = 2),
-      showlegend = F
-    )
+    res_plot <- td2pLL_plot_add_data(plotly_plot = res_plot,
+                                     data_to_add = add_ext_data)
   }
 
   # add ED50 line, if wanted
   if (add_ED50_line) {
-    add_ED50 <- data.frame(
-      time = time_seq,
-      ED50 = td2pLL_coefs["delta"] * time_seq^(-td2pLL_coefs["gamma"]) +
-        td2pLL_coefs["c0"]
-    ) %>% dplyr::filter(
-      .data$ED50 > dose_lim[1] & .data$ED50 < dose_lim[2]
-      )
+    res_plot <- td2pLL_plot_add_ED50(res_plot, td2pLL_coefs = td2pLL_coefs,
+                                     time_seq, dose_lim, ED50_line_col, ED50_line_width)
 
-    # add_ED50 <- add_ED50 %>% filter(ED50 <= 1.02)
-    add_ED50$resp <- 50
-
-    res_plot <- res_plot %>% plotly::add_trace(
-      x = add_ED50$ED50, y = add_ED50$time, z = add_ED50$resp,
-      type = "scatter3d", mode = "lines",
-      showlegend = F,
-      line = list(
-        color = ED50_line_col,
-        width = ED50_line_width
-      )
-    )
   }
 
   return(res_plot)
