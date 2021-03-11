@@ -1,8 +1,8 @@
 ---
-title: "my-vignette"
+title: "Vignette for R-package td2pLL"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Introduction to td2pLL}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
