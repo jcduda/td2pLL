@@ -8,9 +8,12 @@ The goal of td2pLL is to fit and display time-dose two-parameter
 log-logistic (td2pLL) models to appropriate data, e.g. cytotoxicity
 data. The td2pLL model is defined as
 
-$$f(t, d) = 100 - 100\\frac{d^h}{ED\_{50}(t)^h + d^h}$$
+$$
+f(t, d) = 100 - 100\\frac{d^h}{E\\!D\_{50}(t)^h + d^h}
+$$
 with
-*E**D*<sub>50</sub> = *Δ* ⋅ *t*<sup> − *γ*</sup> + *C*<sub>0</sub>
+
+*E* *D*<sub>50</sub> = *Δ* ⋅ *t*<sup> − *γ*</sup> + *C*<sub>0</sub>
 .
 
 ## Installation
@@ -38,9 +41,14 @@ fit <- fit_td2pLL(data = data_subset)
 ![video\_readme\_1](https://user-images.githubusercontent.com/58949350/110949047-6d506e80-8342-11eb-9524-0d9cfa6ee36e.gif)
 
 ``` r
-# change scale of dose axis: 
+# change scale of dose axis to linear scale, so that dose=0 can be displayed: 
 # plot(fit, xaxis_scale = "linear")
+# uncommenting the above line will show you the following in the Viewer or R Studio
+```
 
+![readme\_video\_2](https://user-images.githubusercontent.com/58949350/110951749-b229d480-8345-11eb-9f47-39466e467da7.gif)
+
+``` r
 # Details on fit:
 summary(fit)
 ```
@@ -129,7 +137,7 @@ TDR_res
 plot(TDR_res$fit)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 If we instead look at the measurements for the CHL compound, the
 pre-test suggests to model the time-dependency.

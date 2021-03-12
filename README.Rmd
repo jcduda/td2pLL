@@ -3,7 +3,6 @@
 ---
 title: Time-Dose Two-parameter Log-Logistic Model (td2pLL)
 output: github_document
-always_allow_html: true
 ---
 
 
@@ -25,8 +24,14 @@ library(td2pLL)
 
 The goal of td2pLL is to fit and display time-dose two-parameter log-logistic (td2pLL)  models to appropriate data, e.g. cytotoxicity data. The td2pLL model is defined as 
 
-$$f(t, d) = 100 - 100\frac{d^h}{ED_{50}(t)^h + d^h}$$ with
-$$ED_{50} =\Delta \cdot t^{-\gamma} + C_0$$.
+$$
+f(t, d) = 100 - 100\frac{d^h}{E\!D_{50}(t)^h + d^h}
+$$
+with
+
+$$
+E\!D_{50} =\Delta \cdot t^{-\gamma} + C_0
+$$.
 
 ## Installation
 
@@ -53,7 +58,7 @@ fit <- fit_td2pLL(data = data_subset)
 
 
 ```{r example_linear}
-# change scale of dose axis: 
+# change scale of dose axis to linear scale, so that dose=0 can be displayed: 
 # plot(fit, xaxis_scale = "linear")
 # uncommenting the above line will show you the following in the Viewer or R Studio
 ```
