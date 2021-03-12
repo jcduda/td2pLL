@@ -33,6 +33,8 @@ colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
 # plot(fit)
 ```
+![video_readme_1](https://user-images.githubusercontent.com/58949350/110949268-b1437380-8342-11eb-97bd-99b3efbb82a4.gif)
+
 
 ``` r
 # change scale of dose axis: 
