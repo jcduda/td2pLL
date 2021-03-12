@@ -44,7 +44,7 @@ data(cytotox)
 data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
-plot(fit)
+# plot(fit)
 
 
 ```
@@ -53,7 +53,7 @@ plot(fit)
 
 ```{r}
 # change scale of dose axis: 
-plot(fit, xaxis_scale = "linear")
+# plot(fit, xaxis_scale = "linear")
 
 # Details on fit:
 summary(fit)
@@ -86,7 +86,7 @@ exposure time pn the viability was detected.
 ```{r}
 TDR_res <- TDR(data = data_subset)
 TDR_res
-plot(TDR_res$fit)
+# plot(TDR_res$fit)
 ```
 
 If we instead look at the measurements for the CHL compound, the pre-test
@@ -97,6 +97,6 @@ data_subset <- cytotox[cytotox$compound == "CHL", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 TDR_res <- TDR(data = data_subset)
 TDR_res$pretest
-plot(TDR_res$fit)
+# plot(TDR_res$fit)
 ```
 
