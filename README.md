@@ -31,10 +31,11 @@ data(cytotox)
 data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
+# In your Viewer in R Studio, you will see this when uncommenting the following line
 # plot(fit)
 ```
-![video_readme_1](https://user-images.githubusercontent.com/58949350/110949268-b1437380-8342-11eb-97bd-99b3efbb82a4.gif)
 
+![video\_readme\_1](https://user-images.githubusercontent.com/58949350/110949047-6d506e80-8342-11eb-9524-0d9cfa6ee36e.gif)
 
 ``` r
 # change scale of dose axis: 
@@ -125,8 +126,10 @@ TDR_res
     ##         2.291          1.894
 
 ``` r
-# plot(TDR_res$fit)
+plot(TDR_res$fit)
 ```
+
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 If we instead look at the measurements for the CHL compound, the
 pre-test suggests to model the time-dependency.
