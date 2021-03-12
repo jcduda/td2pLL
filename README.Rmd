@@ -1,3 +1,4 @@
+
 ---
 title: Time-Dose Two-parameter Log-Logistic Model (td2pLL)
 output: github_document
@@ -45,10 +46,8 @@ data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
 # plot(fit)
-
-
 ```
-
+![video_readme_1](https://user-images.githubusercontent.com/58949350/110949047-6d506e80-8342-11eb-9524-0d9cfa6ee36e.gif)
 
 
 ```{r}
