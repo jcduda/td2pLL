@@ -76,7 +76,7 @@ summary(fit)
 
 ``` r
 # Calculate ED50 values at different (exposure) times:
-td2pLL:::get_ED50s(coefs = coef(fit), times = c(1, 2, 3))
+get_ED50s(coefs = coef(fit), times = c(1, 2, 3))
 ```
 
     ##   time      ED50
