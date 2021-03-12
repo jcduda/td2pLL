@@ -34,7 +34,7 @@ f(t, d) = 100-100\frac{d^h}{ED_{50}(t)^h + d^h}
 with
 
 \[
-ED_{50} =\Delta \cdot t^{-\gamma} + C_0.
+ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 \]
 
 ## Installation

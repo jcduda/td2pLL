@@ -17,9 +17,9 @@ f(t, d) = 100-100\frac{d^h}{ED_{50}(t)^h + d^h}
 with
 
 ![
-ED\_{50} =\\Delta \\cdot t^{-\\gamma} + C\_0.
-](https://latex.codecogs.com/png.latex?%0AED_%7B50%7D%20%3D%5CDelta%20%5Ccdot%20t%5E%7B-%5Cgamma%7D%20%2B%20C_0.%0A "
-ED_{50} =\Delta \cdot t^{-\gamma} + C_0.
+ED\_{50} =\\Delta \\cdot t^{-\\gamma} + C\_0 .
+](https://latex.codecogs.com/png.latex?%0AED_%7B50%7D%20%3D%5CDelta%20%5Ccdot%20t%5E%7B-%5Cgamma%7D%20%2B%20C_0%20.%0A "
+ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 ")
 
 ## Installation
