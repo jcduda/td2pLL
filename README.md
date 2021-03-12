@@ -8,13 +8,19 @@ The goal of td2pLL is to fit and display time-dose two-parameter
 log-logistic (td2pLL) models to appropriate data, e.g. cytotoxicity
 data. The td2pLL model is defined as
 
-$$
-f(t, d) = 100 - 100\\frac{d^h}{E\\!D\_{50}(t)^h + d^h}
-$$
+![
+f(t, d) = 100-100\\frac{d^h}{ED\_{50}(t)^h + d^h}
+](https://latex.codecogs.com/png.latex?%0Af%28t%2C%20d%29%20%3D%20100-100%5Cfrac%7Bd%5Eh%7D%7BED_%7B50%7D%28t%29%5Eh%20%2B%20d%5Eh%7D%0A "
+f(t, d) = 100-100\frac{d^h}{ED_{50}(t)^h + d^h}
+")
+
 with
 
-*E* *D*<sub>50</sub> = *Δ* ⋅ *t*<sup> − *γ*</sup> + *C*<sub>0</sub>
-.
+![
+ED\_{50} =\\Delta \\cdot t^{-\\gamma} + C\_0.
+](https://latex.codecogs.com/png.latex?%0AED_%7B50%7D%20%3D%5CDelta%20%5Ccdot%20t%5E%7B-%5Cgamma%7D%20%2B%20C_0.%0A "
+ED_{50} =\Delta \cdot t^{-\gamma} + C_0.
+")
 
 ## Installation
 
@@ -24,8 +30,6 @@ devtools::install_github("jcduda/td2pLL")
 ```
 
 ## Example 1: Plot a td2pLL model fit
-
-This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(td2pLL)
@@ -88,16 +92,18 @@ nested anova it is checked if the time has an influence. Specifically, a
 2pLL model with upper and lower limit set to 100 and 0, respectively,
 that ignores the epxosure time component is the null model. The full
 model is a 2pLL model where for each exposure time, a different
-*E**D*<sub>50</sub> parameter is fitted. Only the *h* parameter is
-shared across exposure times. If the anova test between these nested
-models is significant, an effect of the exposure time is assumed to be
-true. In thas case, a td2pLL model is fitted in the second step, the
-modeling step. If the pre-test does not yield a significant result, then
-the regualr 2pLL model with upper and lower limit 100 and 0,
-respectively, is fitted.
+![ED\_{50}](https://latex.codecogs.com/png.latex?ED_%7B50%7D "ED_{50}")
+parameter is fitted. Only the
+![h](https://latex.codecogs.com/png.latex?h "h") parameter is shared
+across exposure times. If the anova test between these nested models is
+significant, an effect of the exposure time is assumed to be true. In
+thas case, a td2pLL model is fitted in the second step, the modeling
+step. If the pre-test does not yield a significant result, then the
+regualr 2pLL model with upper and lower limit 100 and 0, respectively,
+is fitted.
 
 For the data of the above chosen compound, ASP, no influence of the
-exposure time pn the viability was detected.
+exposure time on the viability was detected.
 
 ``` r
 TDR_res <- TDR(data = data_subset)
