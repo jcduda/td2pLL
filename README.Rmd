@@ -1,6 +1,7 @@
 ---
 title: Time-Dose Two-parameter Log-Logistic Model (td2pLL)
-output: html_document
+output: github_document
+always_allow_html: true
 ---
 
 
@@ -22,8 +23,8 @@ library(td2pLL)
 
 The goal of td2pLL is to fit and display time-dose two-parameter log-logistic (td2pLL)  models to appropriate data, e.g. cytotoxicity data. The td2pLL model is defined as 
 
-$f(t, d) = 100 - 100\frac{d^h}{ED_{50}(t)^h + d^h}$ with
-$ED_{50} =\Delta \cdot t^{-\gamma} + C_0$.
+$$f(t, d) = 100 - 100\frac{d^h}{ED_{50}(t)^h + d^h}$$ with
+$$ED_{50} =\Delta \cdot t^{-\gamma} + C_0$$.
 
 ## Installation
 
@@ -32,7 +33,7 @@ $ED_{50} =\Delta \cdot t^{-\gamma} + C_0$.
 # install.packages("devtools")
 devtools::install_github("jcduda/td2pLL")
 ```
-## Example 1: Fit an plot td2pLL
+## Example 1: Plot a td2pLL model fit
 
 This is a basic example which shows you how to solve a common problem:
 
@@ -44,8 +45,16 @@ data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
 plot(fit)
-# change scale of dose axis
+
+
+```
+
+
+
+```{r}
+# change scale of dose axis: 
 plot(fit, xaxis_scale = "linear")
+
 # Details on fit:
 summary(fit)
 # Calculate ED50 values at different (exposure) times:
