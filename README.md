@@ -4,6 +4,8 @@ Time-Dose Two-parameter Log-Logistic Model (td2pLL)
 <!-- badges: start -->
 <!-- badges: end -->
 
+**This package is in development.**
+
 The goal of td2pLL is to fit and display time-dose two-parameter
 log-logistic (td2pLL) models to appropriate data, e.g. cytotoxicity
 data. The td2pLL model is defined as
