@@ -78,6 +78,8 @@ td2pLL_plot_add_data <- function(plotly_plot, data_to_add) {
 td2pLL_plot_add_ED50 <- function(plotly_plot, td2pLL_coefs, time_seq, dose_lim,
                                  ED50_line_col, ED50_line_width) {
 
+  plotly_plot <- tryCatch(
+    {
   add_ED50 <- data.frame(
     time = time_seq,
     ED50 = td2pLL_coefs["delta"] * time_seq^(-td2pLL_coefs["gamma"]) +
@@ -96,6 +98,14 @@ td2pLL_plot_add_ED50 <- function(plotly_plot, td2pLL_coefs, time_seq, dose_lim,
       color = ED50_line_col,
       width = ED50_line_width
     )
+  )
+  return(plotly_plot)
+  },
+  error = function(cond){
+    warning("ED50 line can not be drawn as these values are not reached yet.
+            Try setting a larger range in dose_lim")
+    return(plotly_plot)
+  }
   )
 
 }
