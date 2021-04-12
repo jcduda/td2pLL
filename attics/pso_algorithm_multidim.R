@@ -61,13 +61,10 @@ opt_des_td2pLL = psoOptDesign(crit=Dcrit, nPoints=12, dimension=2, control = lis
                               gradient= grad_td2pLL_pso, theta= mytheta)
 
 
-#
-#
-#
-### Aequivalenzsatz-Ungleichung fuer td2pLL
+
 
 dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(0, 1),
-                                  n_grid = 101){
+                                  n_grid = 101, return_values = T){
   time_values <- seq(time_lim[1], time_lim[2], length = n_grid)
   dose_values <- seq(dose_lim[1], dose_lim[2], length = n_grid)
   df_values <- expand.grid(time = time_values, dose = dose_values)
@@ -88,7 +85,7 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
                 theta = 45, ticktype = "detailed", xlab="time", ylab="dose",
                 zlab= "equ_thm_val")
 
-  return(list(values = df_values))
+  if(return_values) return(list(values = df_values))
 
 }
 
