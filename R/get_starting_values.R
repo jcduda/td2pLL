@@ -42,7 +42,7 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0) {
 
   # To avoid convergence problems (so that gamma never 0)
   if(ED50_start_low_time == ED50_start_high_time) {
-    ED50_start_high_time = 1.05 * ED50_start_low_time
+    ED50_start_high_time = 0.95 * ED50_start_low_time
   }
 
 
