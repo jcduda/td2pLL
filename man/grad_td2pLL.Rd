@@ -20,8 +20,12 @@ grad_td2pLL(time, dose, h, delta, gamma, c0)
 \item{c0}{(\code{numeric(1)})}
 }
 \value{
-\code{numeric(4)} Gradient vector of the td2pLL model at given
-parameters.
+\code{numeric(5)} Gradient vector of the td2pLL model at given
+parameters. \cr
+Note that the first entry is a 1 for the intercept. In the the \link{td2pLL}
+model, it is assumed to be 100. However, for initial normalization,
+it is important to consider this parameter as unknown for optimal
+design calculations.
 }
 \description{
 For details on the td2pLL model, see \link{fit_td2pLL}

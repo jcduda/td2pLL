@@ -22,8 +22,8 @@ Parameter vector of the td2pLL model in the order h, delta, gamma and c0.}
 
 \item{control}{(named \code{list()}) \cr
 Named list with further arguments for the PSO algorithm: \cr
-\code{numit} (\code{integer(1)}) Number of iterations, default is 100 \cr
-\code{numPart} (\code{integer(1)}) Number of particles, default is 500 \cr
+\code{numIt} (\code{integer(1)}) Number of iterations, default is 100 \cr
+\code{numPart} (\code{integer(1)}) Number of particles, default is 300 \cr
 \code{beta} (\code{numeric(1)}) ???, default is 0.5 \cr
 \code{gamma} (\code{numeric(1)}) ???, default is 0.7 \cr
 \code{setRsol} (\code{logical(1)}) ??, default is FALSE \cr

@@ -18,15 +18,16 @@
 #'  rows.
 #' @examples
 #' finfo(w = c(1/3, 1/3, 1/3),
-#'      M = rbind(c(1.5, 0.4,
+#'      M = rbind(c(1.5, 0.4),
 #'                c(2, 0.3),
-#'                c(5, 0.9))),
+#'                c(5, 0.9)),
 #'      gradient = grad_td2pLL_pso,
 #'      theta = c(h=2, delta=0.2, gamma=1.3, c0=0.2))
 
 finfo <- function(w, M, gradient, theta){
   stopifnot(length(w) == nrow(M))
-  dimTheta <- length(theta)
+  # Add linear parameter e0
+  dimTheta <- length(theta) + 1
   tmp <- matrix(0, dimTheta, dimTheta)
   for(i in 1:nrow(M)){
     tmp = tmp + w[i] * (gradient(M[i, ], theta) %*% t(gradient(M[i, ], theta)))

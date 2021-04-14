@@ -19,6 +19,8 @@
 #' @param return_values (`logical(1)`) \cr
 #'  If the equivalence theorem values at each grid point shall be returned,
 #'  default is `TRUE`.
+#' @param title (`character(1)`) \cr
+#'  Plot title passed to `persp`
 #' @param plot_theta (`numeric(1)`) \cr
 #'  Theta angle passed to `persp`. Default is 45.
 #' @param plot_phi (`numeric(1)`) \cr
@@ -27,13 +29,25 @@
 #'  Rotation passed to persp`. Default is sqrt(3).
 #' @examples
 #'  theta_0 = c(h=2, delta=0.2, gamma=1.3, c0=0.2)
-#'  setwd(1905)
-#'  des <- opt_des_td2pLL(theta =  thtea_0)
-#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0)
+#'  set.seed(1905)
+#'  des <- opt_des_td2pLL(theta =  theta_0)
+#'  equ_values <- dcrit_equ_plot_td2pLL(des = des, theta = theta_0)$values
+#'  # From other perspectives:
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'   plot_theta = 100, plot_phi = 30)
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'   plot_theta = 250, plot_phi = 60)
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'   plot_theta = 200, plot_phi = 60)
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'   plot_theta = 150, plot_phi = 60)
+#'   # check largest value:
+#'   equ_values[which.max(equ_values$eq), ]
 #' @export
 
 dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(0, 1),
-                                  n_grid = 101, return_values = T,
+                                  n_grid = 75, return_values = T,
+                                  title = NULL,
                                   plot_theta = 45, plot_phi = 15, plot_r = sqrt(3)){
   time_values <- seq(time_lim[1], time_lim[2], length = n_grid)
   dose_values <- seq(dose_lim[1], dose_lim[2], length = n_grid)
@@ -52,6 +66,7 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
   eq_values_matrix <- matrix(df_values$eq, nrow = n_grid, ncol = n_grid)
 
   persp(time_values, dose_values, eq_values_matrix,
+        main = title,
                     theta = plot_theta, phi = plot_phi, r = plot_r,
                     ticktype = "detailed", xlab="time", ylab="dose",
                     zlab= "Equ. Thm. Value")

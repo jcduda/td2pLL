@@ -3,7 +3,8 @@
 #'  particle swarm optimization.
 #' @inheritParams psoOptDesign
 #' @param theta (`numeric(4)`) \cr
-#'  Parameter vector of the td2pLL model in the order h, delta, gamma and c0.
+#'  Parameter vector of the (non-linear) td2pLL model parameters in the order
+#'   h, delta, gamma and c0.
 #' @examples
 #' res <- opt_des_td2pLL(theta =  c(h=2, delta=0.2, gamma=1.3, c0=0.2))
 #' res

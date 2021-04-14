@@ -6,8 +6,12 @@
 #' @param delta (`numeric(1)`)
 #' @param gamma (`numeric(1)`)
 #' @param c0 (`numeric(1)`)
-#' @return `numeric(4)` Gradient vector of the td2pLL model at given
-#'  parameters.
+#' @return `numeric(5)` Gradient vector of the td2pLL model at given
+#'  parameters. \cr
+#'  Note that the first entry is a 1 for the intercept. In the the [td2pLL]
+#'  model, it is assumed to be 100. However, for initial normalization,
+#'  it is important to consider this parameter as unknown for optimal
+#'  design calculations.
 
 grad_td2pLL <- function(time, dose, h, delta, gamma, c0){
   # To avoid log(0) throwing an error
@@ -25,7 +29,7 @@ grad_td2pLL <- function(time, dose, h, delta, gamma, c0){
   # c0
   g4 <- const1 * (-1) * B^(h-1) * h
 
-  cbind(h = g1, delta = g2, gamma = g3, c0 = g4)
+  cbind(e0 = 1, h = g1, delta = g2, gamma = g3, c0 = g4)
 }
 
 
