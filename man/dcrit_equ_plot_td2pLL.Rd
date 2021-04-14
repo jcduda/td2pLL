@@ -11,6 +11,7 @@ dcrit_equ_plot_td2pLL(
   dose_lim = c(0, 1),
   n_grid = 101,
   return_values = T,
+  title = NULL,
   plot_theta = 45,
   plot_phi = 15,
   plot_r = sqrt(3)
@@ -37,6 +38,9 @@ within the time and dose boundaries}
 If the equivalence theorem values at each grid point shall be returned,
 default is \code{TRUE}.}
 
+\item{title}{(\code{character(1)}) \cr
+Plot title passed to \code{persp}}
+
 \item{plot_theta}{(\code{numeric(1)}) \cr
 Theta angle passed to \code{persp}. Default is 45.}
 
@@ -59,6 +63,6 @@ The plot object itself cannot be saved as it is generated with \link{persp}.
 \examples{
  theta_0 = c(h=2, delta=0.2, gamma=1.3, c0=0.2)
  setwd(1905)
- des <- opt_des_td2pLL(theta =  thtea_0)
+ des <- opt_des_td2pLL(theta =  theta_0)
  dcrit_equ_plot_td2pLL(des = des, theta = theta_0)
 }

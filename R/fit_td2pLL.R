@@ -7,7 +7,7 @@
 #'  approach. This application of this model is tailored to dose-repsonse
 #'  cytotoxicity data, where also the exposure time is varied in the experiments.
 #'  The model formula is
-#'  \deqn{f(d,t)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
+#'  \deqn{f(t,d)=100-100\frac{d^h}{EC_{50}(t)^h + d^h}}
 #'  with
 #'  \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0}
 #'  where
