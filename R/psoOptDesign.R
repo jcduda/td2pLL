@@ -18,8 +18,8 @@
 #'       gradient shall be evaluated.
 #' @param control (named `list()`) \cr
 #'   Named list with further arguments for the PSO algorithm: \cr
-#'   `numit` (`integer(1)`) Number of iterations, default is 100 \cr
-#'   `numPart` (`integer(1)`) Number of particles, default is 500 \cr
+#'   `numIt` (`integer(1)`) Number of iterations, default is 100 \cr
+#'   `numPart` (`integer(1)`) Number of particles, default is 300 \cr
 #'   `beta` (`numeric(1)`) ???, default is 0.5 \cr
 #'   `gamma` (`numeric(1)`) ???, default is 0.7 \cr
 #'   `setRsol` (`logical(1)`) ??, default is FALSE \cr
