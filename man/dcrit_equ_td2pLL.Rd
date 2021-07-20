@@ -14,7 +14,8 @@ A single (support) point of the design space}
 A calculated design structured as the \link{opt_des_td2pLL} output}
 
 \item{theta}{(\code{numeric(4)}) \cr
-Parameter vector of the td2pLL model in the order h, delta, gamma and c0.}
+Parameter vector of the (non-linear) td2pLL model parameters in the order
+h, delta, gamma and c0.}
 
 \item{finfo_inv}{(optimal \code{matrix()})
 Inverse of Fisher Information matrix.}
