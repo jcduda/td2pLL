@@ -80,7 +80,6 @@ psoOptDesign<-function(crit,control=list(),nPoints=3,dimension=1, Lb=0,Ub=150, x
 
   #Initializing particles
 
-
   arg<-array(0,dim=c(nPoints*2,n, dimension));
 
   if(is.null(wFixed)) {
@@ -98,6 +97,7 @@ psoOptDesign<-function(crit,control=list(),nPoints=3,dimension=1, Lb=0,Ub=150, x
 
   if(is.null(xFixed)) {
     supportvector=c()
+    # might be improved
     for (i in 1: (nPoints*n*dimension)){supportvector[i]=runif(1, Blow[(i%%dimension)+1], Bup[(i%%dimension)+1])}
     arg[(nPoints+1):(2*nPoints), ,]<-array(supportvector, dim=c(nPoints,n, dimension) )
   }
@@ -110,14 +110,14 @@ psoOptDesign<-function(crit,control=list(),nPoints=3,dimension=1, Lb=0,Ub=150, x
   zn<-1:n
 
   #==================================================================
-  #This is where the actual alogorithm begins
+  #This is where the actual algorithm begins
   if(con$setProgressBar) pb<-txtProgressBar(min=0,max=timesteps,style=3)
   for(i in 1:timesteps){
 
     alphas<-gammas^(i/10)
 
     for(k in 1:n){
-      if(sum(nold)==0) zn[k]<--crit(w=arg[1:nPoints,k,dimension],M=arg[(nPoints+1):(2*nPoints),k, ],...)
+      if(sum(nold)==0) zn[k]<- -crit(w=arg[1:nPoints,k,dimension],M=arg[(nPoints+1):(2*nPoints),k, ],...)
       else{
         wts<-c(1/(sum(nold)+n2)*nold,(1-sum(nold)/(sum(nold)+n2))*arg[1:(length(arg[,k, dimension])/2),k, ])
         dos<-c(xold,arg[(length(arg[,k, dimension])/2+1):(length(arg[,k, ])),k])
