@@ -37,9 +37,9 @@ theta (as we assume a non-linear model).
 }
 \examples{
 finfo(w = c(1/3, 1/3, 1/3),
-     M = rbind(c(1.5, 0.4,
+     M = rbind(c(1.5, 0.4),
                c(2, 0.3),
-               c(5, 0.9))),
+               c(5, 0.9)),
      gradient = grad_td2pLL_pso,
      theta = c(h=2, delta=0.2, gamma=1.3, c0=0.2))
 }
