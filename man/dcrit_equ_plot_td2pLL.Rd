@@ -9,7 +9,7 @@ dcrit_equ_plot_td2pLL(
   theta,
   time_lim = c(1, 10),
   dose_lim = c(0, 1),
-  n_grid = 101,
+  n_grid = 75,
   return_values = T,
   title = NULL,
   plot_theta = 45,
@@ -22,7 +22,8 @@ dcrit_equ_plot_td2pLL(
 A calculated design structured as the \link{opt_des_td2pLL} output}
 
 \item{theta}{(\code{numeric(4)}) \cr
-Parameter vector of the td2pLL model in the order h, delta, gamma and c0.}
+Parameter vector of the (non-linear) td2pLL model parameters in the order
+h, delta, gamma and c0.}
 
 \item{time_lim}{(\code{numeric(2)}) \cr
 Lower and upper bound for time}
@@ -62,7 +63,18 @@ The plot object itself cannot be saved as it is generated with \link{persp}.
 }
 \examples{
  theta_0 = c(h=2, delta=0.2, gamma=1.3, c0=0.2)
- setwd(1905)
+ set.seed(1905)
  des <- opt_des_td2pLL(theta =  theta_0)
- dcrit_equ_plot_td2pLL(des = des, theta = theta_0)
+ equ_values <- dcrit_equ_plot_td2pLL(des = des, theta = theta_0)$values
+ # From other perspectives:
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+  plot_theta = 100, plot_phi = 30)
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+  plot_theta = 250, plot_phi = 60)
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+  plot_theta = 200, plot_phi = 60)
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+  plot_theta = 150, plot_phi = 60)
+  # check largest value:
+  equ_values[which.max(equ_values$eq), ]
 }
