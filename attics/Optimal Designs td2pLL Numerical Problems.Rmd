@@ -11,6 +11,7 @@ library(devtools)
 library(ggplot2)
 library(plotly)
 library(knitr)
+library(tidyverse)
 load_all()
 ```
 
@@ -40,6 +41,8 @@ For the intercept however, we assume that is is not fixed, i.e. $E_0$ is not
 This is required for the optimal design calculation as otherwise, no
 design points at dose=0 will be contained in the optimal design.
 
+## 1. Simulation Setup
+
 We vary the number of support points between
 
 - $k \in \{4, 5, ... , 10\}$
@@ -50,137 +53,757 @@ and vary the number iterations between
 
 At each combination, we use, for the beginning 
 
-- $n_{rep} = 5$ repetitions
+- $n_{rep} = 3$ repetitions
 
 only for a first impression on instability.
 
-## Quick Start
 
-From an initial analysis, the $k = 9$ seemed to be optimal. Then the
-numerical problems where discovered.
-
-```{r, echo = FALSE}
-
-plot_td2pLL_des <- function(des, weights, color = NULL, plotly = TRUE) {
-  df <- cbind.data.frame(des, weights)
-  colnames(df)[1:2] <- c("time", "dose")
-  
-  if(is.null(color)){
-    df$color = "blue"
-  } else {
-    stopifnot(length(color) == nrow(des))
-    df$color <- color
-  }
-  
- p <- df %>% ggplot(., 
-               aes(x = dose, y = time, size = weights)) +
-   coord_cartesian(xlim = c(0, 1), ylim = c(1, 10)) + 
-   geom_point(alpha = 0.5, fill = df$color) +
-   scale_size_continuous(limits = c(0, 1)) +
-   # scale_size(range = c(0, 4)) +
-   theme_minimal() +
-   labs(title = paste0("Number of points: ",length(weights))) 
- if(plotly) {
-   p <-  as_widget(ggplotly(p))
- } 
- 
- return(p)
- 
-  
-}
-
-quick_plot <- function(pso_des){
-  des <- pso_des$supPoints
-  weights <- pso_des$weights
-  return(plot_td2pLL_des(des = des, weights = weights))
-  
-}
-
-
-```
-
-## 100 Iterations, 300 particles
-Calculate optimal designs, one per number of points $k$ and 100 iterations and 300 particles:
-
-```{r}
-set.seed(1905)
-
-all_k <- 4:10
-# STOPPED HERE!
-all_rep <- 1:3
-all_num_it <- c(100, 200, 300)
-
-all_combs <- expand.grid(k = all_k,
-                         rep = all_rep,
-                         num_it = all_num_it)
-
-apply(all_combs[1:2,], 1, function(comb){
-  opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
-                             theta = my_theta,
-                             control = list(numIt = comb["num_it"],
-                                            numPart = 300, setProgressBar = TRUE))
-})
-
-res_it_100_part_300 <- vector(mode = "list", length = length(all_k))
-names(res_it_100_part_300) <- paste0("k_", all_k)
-for(i in 1:length(all_k)){
-  res_it_100_part_300[[i]] <-
- opt_des_td2pLL(nPoints = all_k[i], theta = my_theta, control = list(numIt = 100, numPart = 300, setProgressBar = TRUE))
-
-}
-
-save(res_it_100_part_300, file="res_it_100_part_300.RData")
-load("res_it_100_part_300.RData")
-
-```
-
-```{r}
-plot_list <- htmltools::tagList()
-for (i in 1:length(res_it_100_part_300)) 
-  plot_list[[i]] = as_widget(quick_plot(res_it_100_part_300[[i]]) )
-plot_list
-```
-
-### Equivalence plot
-
-```{r}
-td2pLL::dcrit_equ_plot_td2pLL(res_it_100_part_300$k_9,
-                              theta = my_theta, return_values = F,
-                              title = "Points: 9, Iterations: 100")
-```
-
-
-
-## 200 Iterations, 300 particles
-```{r}
+```{r, run_sim}
 # set.seed(1905)
 # 
-# all_k <- 3:13
-# res_it_200_part_300 <- vector(mode = "list", length = length(all_k))
-# names(res_it_200_part_300) <- paste0("k_", all_k)
-# for(i in 1:length(all_k)){
-#   res_it_200_part_300[[i]] <-
-#  opt_des_td2pLL(nPoints = all_k[i], theta = my_theta, control = list(numIt = 200, numPart = 300, setProgressBar = TRUE))
-#   
-# }
+# all_k <- 4:10
+# all_rep <- 1:3
+# all_num_it <- c(100, 200, 300)
 # 
-# save(res_it_200_part_300, file="res_it_200_part_300.RData")
-load("res_it_200_part_300.RData")
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[9,] %>% unlist
+# sim_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = 300, setProgressBar = FALSE))
+#   
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1)))
+#   
+#   return(opt_des_df)
+# })
 
 ```
 
 ```{r}
 
-plot_list <- htmltools::tagList()
-for (i in 1:length(res_it_200_part_300)) 
-  plot_list[[i]] = as_widget(quick_plot(res_it_200_part_300[[i]]) )
-plot_list
+# sim_res <-  do.call(rbind.data.frame, sim_res)
+# 
+# sim_res <- sim_res %>% group_by(k, num_it, rep) %>%
+#   mutate(sim_id = group_indices()) %>%
+#   arrange(k, num_it, rep) %>%
+#   select(sim_id, everything()) %>%
+#   ungroup()
+# 
+# sim_res <- sim_res %>% mutate_at(1:4, as.character) %>%
+#   mutate(k = factor(k, levels = all_k))
+# 
+# save(sim_res, file = "optDes_sim_res_01.RData")
+load("optDes_sim_res_01.RData")
+
 ```
 
-### Equivalence plot
+## 1. Simulation results
+
+Optimal designs for different $k$ and number of iterations
+For each combination there are three replicates.
+All three replicates are in one plot (distinguished with colors).
+
+One can see that the algirithm has highly varying results.
+
+```{r, fig.width=10, fig.height=10}
+
+sim_res %>%
+ggplot(., aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( k~ num_it)
+```
+
+
+Unfortunately, there is no clear pattern visible \textit{on first glance}.
+
+In the following, we look at the 10 results with the largest
+value for the D-optimality criterion (on $\log_{10}$ scale):
 
 ```{r}
-td2pLL::dcrit_equ_plot_td2pLL(res_it_200_part_300$k_9,
-                              theta = my_theta, return_values = F,
-                              title = "Points: 9, Iterations: 200")
+n_top <- 10
+
+n_top_des <- sim_res %>% arrange(by = desc(log10_value)) %>%
+  group_by(log10_value, sim_id) %>% 
+  mutate(group_id = cur_group_id()) %>%
+  ungroup() %>% 
+  filter(group_id >= max(group_id) - n_top + 1)
+  
+n_top_des %>%
+ggplot(., aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( k~ num_it)
+  
+
 ```
+
+### Best design found: k=7 is promising
+
+The very best design seems to be this one $k=7$ and 300 iterations:
+
+
+```{r}
+top_des <- n_top_des %>%
+  filter(log10_value == max(log10_value)) 
+  
+p <- ggplot(top_des, aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( k~ num_it, labeller = "label_both") +
+labs(title = paste0("Log10 D-crit value: ", round(top_des$log10_value[1], 4)))
+ggplotly(p)
+  
+
+```
+The equivalence plot for this design:
+
+```{r, des_to_list}
+des_to_list <- function(des_df){
+  des_list <- list(
+    value =  des_df$log10_value[1],
+    weights = des_df$weights,
+    supPoints = as.data.frame(des_df[, c("time", "dose")])
+  )
+  return(des_list)
+}
+```
+
+
+```{r, fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+```
+
+\textbf{Seven points actualy seems to be correct!}
+Six "peaks" in the surface and one point alongside the time=0 edge!!!
+
+Also, the optimal weights seem to be:
+1/5, 2/15, 2/15, ..., 2/15
+
+
+### 2. Simulation: Focus: k = 7
+
+We add a second analysis where we fix $k=7$ as number of support points
+and instead vary the 
+- number of iterations in \{200, 300\} and the
+- number of particles in \{50, 100, 300\}
+
+and allow us to have
+- 5 repicates
+
+```{r, run_sim_02}
+# set.seed(1905)
+# 
+# all_k <- 7
+# all_rep <- 1:5
+# all_num_it <- c(200, 300)
+# all_num_part <- c(50, 100, 300)
+# 
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          num_part = all_num_part,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[1,] %>% unlist
+# sim_02_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = comb["num_part"],
+#                                             setProgressBar = FALSE))
+# 
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              num_part = comb["num_part"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1))) %>%
+#              as.data.frame()
+# 
+#   return(opt_des_df)
+# })
+
+
+```
+
+
+```{r, load_sim_02}
+ # sim_02_res <-  do.call(rbind.data.frame, sim_02_res)
+ # 
+ # sim_02_res <- sim_02_res %>% group_by(num_it, num_part, rep) %>%
+ #   mutate(sim_id = group_indices()) %>%
+ #   arrange(num_it, num_part,  rep) %>%
+ #   select(sim_id, everything()) %>%
+ #   ungroup()
+ # 
+ #  sim_02_res <- sim_02_res %>% mutate_at(1:5, as.character)  %>%
+ #   mutate(num_part = factor(num_part, levels = all_num_part))
+ # 
+ #  save(sim_02_res, file = "optDes_sim_res_02.RData")
+load("optDes_sim_res_02.RData")
+
+```
+
+### Clear estimation difficulties: No optimal design found
+
+```{r, fig.width=10, fig.height=5}
+
+p <- sim_02_res %>%
+ ggplot(., aes(x = dose, y = time, size = weights, color =  rep, shape = rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 0.5)) +
+  facet_grid( num_it~num_part, labeller = "label_both")
+
+ggplotly(p)
+```
+
+Again: Very unclear pattern.
+
+Design with best D-criterion:
+
+
+```{r}
+top_des <- sim_02_res %>%
+  filter(log10_value == max(log10_value)) 
+  
+p <- ggplot(top_des, aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( num_it~num_part, labeller = "label_both") +
+  labs(title = paste0("Log10 D-crit value: ", round(top_des$log10_value[1], 4)))
+ggplotly(p)
+  
+
+```
+
+Does not seem to be optimal, as it does not have the most likely optimal structure
+described above.
+
+Corresponding equivalence plot: Clearly not optimal!
+
+```{r, fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+```
+## 3. Simulation: k=7 and fixed weights
+
+We redo the simulation study 2 but with fixed weights that we assume to be right:
+1/5, 2/15, 2/15, ..., 2/15.
+
+```{r, simulation_3_run}
+# set.seed(1905)
+# 
+# all_k <- 7
+# all_rep <- 1:5
+# all_num_it <- c(200, 300)
+# all_num_part <- c(50, 100, 300)
+# fixed_weights <- c(1/5, rep(2/15, 6))
+# 
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          num_part = all_num_part,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[1,] %>% unlist
+# sim_03_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta,
+#                              wFixed = fixed_weights,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = comb["num_part"],
+#                                             setProgressBar = FALSE))
+# 
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              num_part = comb["num_part"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1))) %>%
+#              as.data.frame()
+# 
+#   return(opt_des_df)
+# })
+
+
+```
+
+
+```{r, load_sim_03}
+ # sim_03_res <-  do.call(rbind.data.frame, sim_03_res)
+ # 
+ # sim_03_res <- sim_03_res %>% group_by(num_it, num_part, rep) %>%
+ #   mutate(sim_id = cur_group_id()) %>%
+ #   arrange(num_it, num_part,  rep) %>%
+ #   select(sim_id, everything()) %>%
+ #   ungroup()
+ # 
+ #  sim_03_res <- sim_03_res %>% mutate_at(1:5, as.character)  %>%
+ #   mutate(num_part = factor(num_part, levels = all_num_part))
+ # 
+ #  save(sim_03_res, file = "optDes_sim_res_03.RData")
+load("optDes_sim_res_03.RData")
+
+```
+
+### Results Simulation 3: k=7, fixed wights
+
+```{r, fig.width=10, fig.height=5}
+
+p <- sim_03_res %>%
+ ggplot(., aes(x = dose, y = time, size = weights, color =  rep, shape = rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 0.5)) +
+  facet_grid( num_it~num_part, labeller = "label_both")
+
+ggplotly(p)
+```
+
+Might be better! Let's look at the best (by D-criterion) result
+and its equivalence plot:
+
+```{r}
+top_des <- sim_03_res %>%
+  filter(log10_value == max(log10_value)) 
+  
+p <- ggplot(top_des, aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( num_it~num_part, labeller = "label_both") +
+  labs(title = paste0("Log10 D-crit value: ", round(top_des$log10_value[1], 4)))
+ggplotly(p)
+  
+```
+
+Same value (9.6074) for D-criterion as best design of SImulation 1!
+Same pattern, but as presumed, the time value for dose=0 is arbitrary,
+it just has to obtain the bigger weight: 0.20.
+
+### Top 10 best designs of Simulation 3
+
+```{r}
+n_top <- 10
+
+n_top_des <- sim_03_res %>% arrange(by = desc(log10_value)) %>%
+  group_by(log10_value, sim_id) %>% 
+  mutate(group_id = cur_group_id()) %>%
+  ungroup() %>% 
+  filter(group_id >= max(group_id) - n_top + 1)
+  
+p <- n_top_des %>%
+ggplot(., aes(x = dose, y = time, size = weights, color =  rep, label = log10_value)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( num_it~num_part, labeller = "label_both")
+
+ggplotly(p)
+  
+
+```
+
+300 particles and 300 iterations seems to be the best option.
+
+Equivalence plot of the best design of simulation 3:
+
+```{r, fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+```
+
+
+
+## Simulation 4: Try with (maybe) easier design and fixed weights
+
+Additionally try with a model where I guess it is easier to estimate the 
+parameters (because of a stronger influence of time).
+
+```{r, echo = TRUE}
+my_theta_2 = c(h=2, delta=0.7, gamma=0.5, c0=0.1)
+plot_td2pLL(td2pLL_coefs = my_theta_2, dose_lim = c(0, 1), time_lim = c(1, 10),
+            xaxis_scale = "linear")
+```
+
+
+```{r, simulation_4_run}
+# set.seed(1905)
+# 
+# all_k <- 7
+# all_rep <- 1:5
+# all_num_it <- c(200, 300)
+# all_num_part <- c(50, 100, 300)
+# fixed_weights <- c(1/5, rep(2/15, 6))
+# 
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          num_part = all_num_part,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[1,] %>% unlist
+# sim_04_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta_2,
+#                              wFixed = fixed_weights,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = comb["num_part"],
+#                                             setProgressBar = FALSE))
+# 
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              num_part = comb["num_part"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1))) %>%
+#              as.data.frame()
+# 
+#   return(opt_des_df)
+# })
+
+
+```
+
+
+```{r, load_sim_04}
+ # sim_04_res <-  do.call(rbind.data.frame, sim_04_res)
+ # 
+ # sim_04_res <- sim_04_res %>% group_by(num_it, num_part, rep) %>%
+ #   mutate(sim_id = cur_group_id()) %>%
+ #   arrange(num_it, num_part,  rep) %>%
+ #   select(sim_id, everything()) %>%
+ #   ungroup()
+ # 
+ #  sim_04_res <- sim_04_res %>% mutate_at(1:5, as.character)  %>%
+ #   mutate(num_part = factor(num_part, levels = all_num_part))
+ # 
+ #  save(sim_04_res, file = "optDes_sim_res_04.RData")
+load("optDes_sim_res_04.RData")
+
+```
+
+
+### Results Simulation 4: Easier model, k=7, fixed wights
+
+```{r, fig.width=10, fig.height=5}
+
+p <- sim_04_res %>%
+ ggplot(., aes(x = dose, y = time, size = weights, color =  rep, shape = rep,
+               label = log10_value)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 0.5)) +
+  facet_grid( num_it~num_part, labeller = "label_both")
+
+ggplotly(p)
+```
+
+Also with the presumably easier model, the results are highly varying.
+We look at the 10 best results based on the D-optimality criterion:
+
+### Top 10 best designs of Simulation 4
+
+```{r}
+n_top <- 10
+
+n_top_des <- sim_04_res %>% arrange(by = desc(log10_value)) %>%
+  group_by(log10_value, sim_id) %>% 
+  mutate(group_id = cur_group_id()) %>%
+  ungroup() %>% 
+  filter(group_id >= max(group_id) - n_top + 1)
+  
+p <- n_top_des %>%
+ggplot(., aes(x = dose, y = time, size = weights, color =  rep, label = log10_value)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( num_it~num_part, labeller = "label_both")
+
+ggplotly(p)
+  
+
+```
+
+### Best design fo simulation 4:
+
+The design fulfils the structure.
+
+```{r}
+top_des <- sim_04_res %>%
+  filter(log10_value == max(log10_value)) 
+  
+p <- ggplot(top_des, aes(x = dose, y = time, size = weights, color =  rep)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 1)) +
+  facet_grid( num_it~num_part, labeller = "label_both") +
+  labs(title = paste0("Log10 D-crit value: ", round(top_des$log10_value[1], 4)))
+ggplotly(p)
+  
+```
+
+And it is optimal:
+
+```{r, fig.width=10, fig.height=10}
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+```
+
+
+The plot is not fully below zero. The peak is at the in-between time value.
+It might be, because they are not even levelled (on the time-axis).
+
+
+## Simulation 5: Itertions=1000, particles=1000
+Also try: Very large number of iterations and particles:
+
+```{r, siulation_5_run}
+
+# set.seed(1905)
+# 
+# all_k <- 7
+# all_rep <- 1:10
+# all_num_it <- 1000
+# all_num_part <- 1000
+# fixed_weights <- c(1/5, rep(2/15, 6))
+# 
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          num_part = all_num_part,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[1,] %>% unlist
+# sim_05_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta_2,
+#                              wFixed = fixed_weights,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = comb["num_part"],
+#                                             setProgressBar = FALSE))
+# 
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              num_part = comb["num_part"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1))) %>%
+#              as.data.frame()
+# 
+#   return(opt_des_df)
+# })
+
+```
+
+
+```{r, load_sim_05}
+#  sim_05_res <-  do.call(rbind.data.frame, sim_05_res)
+# 
+#  sim_05_res <- sim_05_res %>% group_by(num_it, num_part, rep) %>%
+#    mutate(sim_id = cur_group_id()) %>%
+#    arrange(num_it, num_part,  rep) %>%
+#    select(sim_id, everything()) %>%
+#    ungroup()
+# 
+#   sim_05_res <- sim_05_res %>% mutate_at(1:5, as.character)  %>%
+#    mutate(num_part = factor(num_part, levels = all_num_part))
+# 
+# save(sim_05_res, file = "optDes_sim_res_05.RData")
+load("optDes_sim_res_05.RData")
+
+```
+
+### Results Simulation 5
+
+For 4 out of 10 replications, the optial design was achieved now
+(Replication 1, 5, 6, 7).
+
+Also: Seems like time value is not the same for the two dose values in between!
+
+```{r, fig.width=10, fig.height=5}
+
+p <- sim_05_res %>%
+ ggplot(., aes(x = dose, y = time, size = weights, color =  rep,
+               label = log10_value)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 0.5)) 
+
+ggplotly(p)
+```
+### Simulation 5: Equivalence plot
+
+```{r, fig.width=10, fig.height=10}
+top_des <- sim_05_res %>%
+  filter(log10_value == max(log10_value)) 
+
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+
+```
+
+Weird that the equivalence plot suggests non-optimality.
+
+
+## Simulation 6: IterationsParticles=1000, no fixed weights:
+
+
+
+Try again with non-fixed weights and iterations=particles=1000:
+
+```{r, simulation_6_run}
+# 
+# set.seed(1905)
+# 
+# all_k <- 7
+# all_rep <- 1:10
+# all_num_it <- 1000
+# all_num_part <- 1000
+# 
+# 
+# all_combs <- expand.grid(k = all_k,
+#                          num_it = all_num_it,
+#                          num_part = all_num_part,
+#                          rep = all_rep)
+# 
+# # comb <- all_combs[1,] %>% unlist
+# sim_06_res <- apply(all_combs, 1, function(comb){
+#   opt_des <-  opt_des_td2pLL(nPoints = comb["k"],
+#                              theta = my_theta_2,
+#                              wFixed = NULL,
+#                              control = list(numIt = comb["num_it"],
+#                                             numPart = comb["num_part"],
+#                                             setProgressBar = FALSE))
+# 
+#   opt_des_df <- cbind(
+#              k = comb["k"],
+#              num_it = comb["num_it"],
+#              num_part = comb["num_part"],
+#              rep = comb["rep"],
+#              time = opt_des$supPoints[, 1],
+#              dose = opt_des$supPoints[, 2],
+#              weights = opt_des$weights,
+#              log10_value = log10(max(opt_des$value, 1))) %>%
+#              as.data.frame()
+# 
+#   return(opt_des_df)
+# })
+# 
+# ```
+# 
+# 
+# ```{r, load_sim_05}
+#  sim_06_res <-  do.call(rbind.data.frame, sim_06_res)
+# 
+#  sim_06_res <- sim_06_res %>% group_by(num_it, num_part, rep) %>%
+#    mutate(sim_id = cur_group_id()) %>%
+#    arrange(num_it, num_part,  rep) %>%
+#    select(sim_id, everything()) %>%
+#    ungroup()
+# 
+#   sim_06_res <- sim_06_res %>% mutate_at(1:5, as.character)  %>%
+#    mutate(num_part = factor(num_part, levels = all_num_part))
+# 
+# save(sim_06_res, file = "optDes_sim_res_06.RData")
+load("optDes_sim_res_06.RData")
+
+```
+
+Top design is replicate 3: Here, it looks again like even levelled
+in-between time-value is good.
+
+```{r, fig.width=10, fig.height=5}
+
+p <- sim_06_res %>%
+ ggplot(., aes(x = dose, y = time, size = weights, color =  rep,
+               label = log10_value)) +
+  geom_point(alpha = 0.5) +
+  scale_size_continuous(limits = c(0, 0.5)) 
+
+ggplotly(p)
+```
+```{r, fig.width=10, fig.height=10}
+top_des <- sim_06_res %>%
+  filter(log10_value == max(log10_value)) 
+
+par(mfrow = c(2, 2))
+top_des_equ <- dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2,
+                                      n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 160, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 120, n_grid = 50)
+dcrit_equ_plot_td2pLL(des = des_to_list(top_des), theta = my_theta_2, return_values = F,
+                                     plot_phi = 30, plot_theta = 60, n_grid = 50)
+
+
+```
+
+
+
+## Idea
+
+Incorporating the structure of having:
+
+two points at lowest time, two at highest, two in between (but at the same
+time value!) might improve the algorithm!
+
+Also: Deep dive into the particle swarm optimizer to better understand
+the role of the hyperparameters beta and gamma!
+
+
