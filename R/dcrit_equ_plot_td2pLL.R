@@ -53,6 +53,7 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
   dose_values <- seq(dose_lim[1], dose_lim[2], length = n_grid)
   df_values <- expand.grid(time = time_values, dose = dose_values)
 
+
   finfo_inv <- solve(finfo(w = des$w, M = des$supPoints, gradient = grad_td2pLL_pso,
                            theta = theta))
 
@@ -64,6 +65,11 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
   })
 
   eq_values_matrix <- matrix(df_values$eq, nrow = n_grid, ncol = n_grid)
+
+  if(is.null(title)) title <- paste0("Max: ", round(max(df_values$eq), 4)
+                                    ," at t=", round(df_values$time[which.max(df_values$eq)], 4)
+                                    ,", dose=", round(df_values$dose[which.max(df_values$eq)], 4)
+                                    )
 
   persp(time_values, dose_values, eq_values_matrix,
         main = title,
