@@ -18,7 +18,8 @@ opt_des_td2pLL(
 Number of design support points (number of rows of argument \code{M} for other functions).}
 
 \item{theta}{(\code{numeric(4)}) \cr
-Parameter vector of the td2pLL model in the order h, delta, gamma and c0.}
+Parameter vector of the (non-linear) td2pLL model parameters in the order
+h, delta, gamma and c0.}
 
 \item{control}{(named \code{list()}) \cr
 Named list with further arguments for the PSO algorithm: \cr
