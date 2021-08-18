@@ -13,6 +13,9 @@
 #' @examples
 #' plot_td2pLL(td2pLL_coefs = c(h = 2, delta = 3, gamma = 1.5, c0 = 1),
 #'  dose_lim = c(0.01, 10), time_lim = c(1, 5))
+#' plot_td2pLL(td2pLL_coefs = c(h = 1.5, delta = 5, gamma = 1, c0 = 0.1),
+#'  dose_lim = c(0.1, 10), time_lim = c(1, 10), xaxis_scale = "log",
+#'  yaxis_scale = "linear")
 
 plot_td2pLL <- function(td2pLL_coefs = NULL,
                         dose_lim = NULL,
