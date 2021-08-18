@@ -4,5 +4,4 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom rlang .data
 #' @importFrom smoof makeSingleObjectiveFunction
-#' @importFrom mlrMBO mbo
 NULL
