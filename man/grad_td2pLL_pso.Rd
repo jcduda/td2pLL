@@ -6,7 +6,15 @@
 \usage{
 grad_td2pLL_pso(x, theta)
 }
+\arguments{
+\item{x}{(\code{numeric(2)}) \cr
+Contains time and dose}
+
+\item{theta}{(\code{numeric(4)}) \cr
+Parameter vector of the (non-linear) td2pLL model parameters in the order
+h, delta, gamma and c0.}
+}
 \description{
 Wrapper function of \link{grad_td2pLL} to pass
-it to the \link{psoOptDes} function as argument gradient.
+it to the \link{psoOptDesign} function as argument gradient.
 }

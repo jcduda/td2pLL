@@ -1,7 +1,8 @@
 #' @importFrom dplyr mutate filter select group_by summarize '%>%'
-#' @importFrom stats anova coef nls predict
+#' @importFrom stats anova coef nls predict rnorm runif
 #' @importFrom drc LL2.2 LL.2 drmc
 #' @importFrom tidyr pivot_wider
 #' @importFrom rlang .data
-#' @importFrom smoof makeSingleObjectiveFunction
+#' @importFrom graphics persp
+#' @importFrom utils setTxtProgressBar txtProgressBar
 NULL

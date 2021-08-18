@@ -81,7 +81,7 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
 
   eq_values_matrix <- matrix(df_values$eq, nrow = n_grid, ncol = n_grid)
 
-  equ_plot <- persp(time_values, dose_values, eq_values_matrix,
+  equ_plot <- graphics::persp(time_values, dose_values, eq_values_matrix,
                 theta = 45, ticktype = "detailed", xlab="time", ylab="dose",
                 zlab= "equ_thm_val")
 

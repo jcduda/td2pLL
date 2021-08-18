@@ -1,3 +1,4 @@
+#' @export
 #' @title Gradient function of the td2pLL model
 #' @description For details on the td2pLL model, see [fit_td2pLL]
 #' @param time (`numeric(1)`)
@@ -32,10 +33,13 @@ grad_td2pLL <- function(time, dose, h, delta, gamma, c0){
   cbind(e0 = 1, h = g1, delta = g2, gamma = g3, c0 = g4)
 }
 
-
+#' @export
 #' @title Gradient of td2pLL for PSO
 #' @description Wrapper function of [grad_td2pLL] to pass
-#' it to the [psoOptDes] function as argument gradient.
+#' it to the [psoOptDesign] function as argument gradient.
+#' @param x (`numeric(2)`) \cr
+#'   Contains time and dose
+#' @inheritParams opt_des_td2pLL
 
 grad_td2pLL_pso <- function(x, theta){
   t(grad_td2pLL(time = x[1], dose = x[2],

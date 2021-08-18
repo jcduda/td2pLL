@@ -175,7 +175,7 @@ psoOptDesign<-function(crit,control=list(),nPoints=3,dimension=1, Lb=0,Ub=150, x
     print("PSO-Algorithmus has finished. Intermediate results:")
     print(list(weights=round(wo,digits=5),supPoints=round(xo,digits=5)))
     print("start using solnp from package Rsol, please wait...") #Lagrange-Optimierung
-    require(Rsolnp, quietly = TRUE)
+    # require(Rsolnp, quietly = TRUE)
     eqfun<-function(w) sum(w[1:nPoints])
     fac<-1/crit(wo,xo,...)
     fun<-function(w) -fac*crit(w[1:nPoints],w[(nPoints+1):(2*nPoints)],...)

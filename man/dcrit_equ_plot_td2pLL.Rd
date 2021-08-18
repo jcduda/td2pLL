@@ -2,7 +2,7 @@
 % Please edit documentation in R/dcrit_equ_plot_td2pLL.R
 \name{dcrit_equ_plot_td2pLL}
 \alias{dcrit_equ_plot_td2pLL}
-\title{D-optimality equvalence theorem plot for td2pLL model}
+\title{D-optimality equivalence theorem plot for td2pLL model}
 \usage{
 dcrit_equ_plot_td2pLL(
   des,
@@ -48,12 +48,12 @@ Theta angle passed to \code{persp}. Default is 45.}
 \item{plot_phi}{(\code{numeric(1)}) \cr
 Phi angle passed to \code{persp}. Default is 15.}
 
-\item{r_theta}{(\code{numeric(1)}) \cr
+\item{plot_r}{(\code{numeric(1)}) \cr
 Rotation passed to persp`. Default is sqrt(3).}
 }
 \description{
 Using the \link{dcrit_equ_td2pLL} function to calculate the
-equivalence theorem inequality at one design points, the correspoinding
+equivalence theorem inequality at one design points, the corresponding
 equivalence theorem plot can be visualized with this function.
 Note that, if the entire surface is equal to or below zero, the design
 is D-optimal.
@@ -67,13 +67,13 @@ The plot object itself cannot be saved as it is generated with \link{persp}.
  des <- opt_des_td2pLL(theta =  theta_0)
  equ_values <- dcrit_equ_plot_td2pLL(des = des, theta = theta_0)$values
  # From other perspectives:
- dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
   plot_theta = 100, plot_phi = 30)
- dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
   plot_theta = 250, plot_phi = 60)
- dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
   plot_theta = 200, plot_phi = 60)
- dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+ dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
   plot_theta = 150, plot_phi = 60)
   # check largest value:
   equ_values[which.max(equ_values$eq), ]

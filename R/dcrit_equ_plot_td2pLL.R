@@ -1,8 +1,8 @@
 
 
-#' @title D-optimality equvalence theorem plot for td2pLL model
+#' @title D-optimality equivalence theorem plot for td2pLL model
 #' @description Using the [dcrit_equ_td2pLL] function to calculate the
-#' equivalence theorem inequality at one design points, the correspoinding
+#' equivalence theorem inequality at one design points, the corresponding
 #' equivalence theorem plot can be visualized with this function.
 #' Note that, if the entire surface is equal to or below zero, the design
 #' is D-optimal.
@@ -25,7 +25,7 @@
 #'  Theta angle passed to `persp`. Default is 45.
 #' @param plot_phi (`numeric(1)`) \cr
 #'  Phi angle passed to `persp`. Default is 15.
-#' @param r_theta (`numeric(1)`) \cr
+#' @param plot_r (`numeric(1)`) \cr
 #'  Rotation passed to persp`. Default is sqrt(3).
 #' @examples
 #'  theta_0 = c(h=2, delta=0.2, gamma=1.3, c0=0.2)
@@ -33,13 +33,13 @@
 #'  des <- opt_des_td2pLL(theta =  theta_0)
 #'  equ_values <- dcrit_equ_plot_td2pLL(des = des, theta = theta_0)$values
 #'  # From other perspectives:
-#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
 #'   plot_theta = 100, plot_phi = 30)
-#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
 #'   plot_theta = 250, plot_phi = 60)
-#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
 #'   plot_theta = 200, plot_phi = 60)
-#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = F,
+#'  dcrit_equ_plot_td2pLL(des = des, theta = theta_0, return_values = FALSE,
 #'   plot_theta = 150, plot_phi = 60)
 #'   # check largest value:
 #'   equ_values[which.max(equ_values$eq), ]
@@ -71,7 +71,7 @@ dcrit_equ_plot_td2pLL <- function(des, theta, time_lim = c(1, 10), dose_lim = c(
                                     ,", dose=", round(df_values$dose[which.max(df_values$eq)], 4)
                                     )
 
-  persp(time_values, dose_values, eq_values_matrix,
+  graphics::persp(time_values, dose_values, eq_values_matrix,
         main = title,
                     theta = plot_theta, phi = plot_phi, r = plot_r,
                     ticktype = "detailed", xlab="time", ylab="dose",

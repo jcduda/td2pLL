@@ -1,3 +1,4 @@
+#' @export
 #' @title Fisher Information Matrix for multidimensional designs
 #' @details Calculates the fisher information matrix for a multidimensional
 #' optimal design in dependency on weights, the design, the gradient and
@@ -36,7 +37,7 @@ finfo <- function(w, M, gradient, theta){
   return(tmp)
 }
 
-
+#' @export
 #' @title Determinant of Fisher Information Matrix
 #' @description Can be used as `crit` in [psoOptDesign].
 #' @inheritParams finfo

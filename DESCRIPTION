@@ -26,10 +26,12 @@ Imports:
     drc (>= 3.0.1),
     plotly (>= 4.9.2.1),
     tidyr (>= 1.1.2),
-    rlang (>= 0.4.7)
+    rlang (>= 0.4.7),
+    graphics
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
+    Rsolnp,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
