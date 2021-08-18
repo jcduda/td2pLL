@@ -9,7 +9,7 @@
 #'  Optional starting value for the `h` parameter.
 #'  Default is 2.
 #' @param c0_start (`numeric(1)`)\cr
-#'  Optional starting value for the trheshold parameter `c0`.
+#'  Optional starting value for the threshold parameter `c0`.
 #'  Default is 0.
 #' @details As starting value for `delta` and `gamma`, a pair of
 #'  cheap starting values of (dose, ED50) at the lowest and the highest
