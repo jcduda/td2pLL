@@ -1,5 +1,7 @@
 ---
 title: "Vignette for R-package td2pLL"
+author: "Julia Duda"
+date: `r Sys.Date()`
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to td2pLL}
