@@ -81,7 +81,3 @@ log-logistic (td2pLL) model when parameters are specified but there is no
 underlying fit. See \link{fit_td2pLL} for the model function.
 If a model fit is available through \link{fit_td2pLL}, please use \link{plot.td2pLL_mod}.
 }
-\examples{
-plot_td2pLL(td2pLL_coefs = c(h = 2, delta = 3, gamma = 1.5, c0 = 1),
- dose_lim = c(0.01, 10), time_lim = c(1, 5))
-}
