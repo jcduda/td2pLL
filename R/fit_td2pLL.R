@@ -88,18 +88,31 @@
 
 fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
                        upper = NULL, trace = FALSE) {
+
+  msg_1 <- 'data must be a numeric data.frame with colnames "time", "dose" and "resp"'
+  if(is.null(data) | all(is.na(data)))
+    stop(msg_1)
+  if(!is.data.frame(data))
+    stop(msg_1)
+  if(ncol(data) < 3 | !all(apply(data, 2, is.numeric)))
+    stop(msg_1)
   if (!(all(colnames(data) %in% c("time", "dose", "resp")))) {
-    stop("Argument data must be a data frame with columns expo, dose, resp.")
+    stop(msg_1)
   }
 
 
   doses <- unique(data$dose)
+  if(length(doses) < 2)
+    stop("Data must contain at least two different doses.")
 
+  if(length(unique(data$time)) < 2)
+    stop("Data must contain at least 3 different times.")
 
   if (is.null(start)) {
     start <- get_starting_values(data)
   } else {
-    if ((length(start) != 4) | !is.numeric(start)) stop("Argument start must be numeric of length 4.")
+    if ((length(start) != 4) | !is.numeric(start))
+      stop("Argument start must be numeric of length 4.")
   }
 
   if (is.null(control)) {
@@ -153,18 +166,18 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
   # )
 
   fit <- minpack.lm::nlsLM(resp_m ~ 100 - 100 * (dose^h) / ((delta * time^(-gamma) + c0)^h + dose^h),
-              data = data_w,
-              weights = data_w$n,
-              algorithm = "LM",
-              lower = lower,
-              upper = upper,
-              start = start,
-              trace = trace,
-             control = list(maxiter = control$maxiter,
-                            nprint = ifelse(control$printEval, control$maxiter, 0),
-                            ptol = 1e-04,
-                            ftol = 1e-05)
-   )
+                           data = data_w,
+                           weights = data_w$n,
+                           algorithm = "LM",
+                           lower = lower,
+                           upper = upper,
+                           start = start,
+                           trace = trace,
+                           control = list(maxiter = control$maxiter,
+                                          nprint = ifelse(control$printEval, control$maxiter, 0),
+                                          ptol = 1e-04,
+                                          ftol = 1e-05)
+  )
 
   if(coef(fit)["gamma"] %in% c(0.01, -0.01)){
     warning(paste0("gamma fit = ", coef(fit)["gamma"]," is on the boundary and close to zero.
