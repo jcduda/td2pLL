@@ -15,7 +15,7 @@
 #'  with
 #'  \deqn{EC_{50}(t) = \Delta \cdot t^{-\gamma} + C_0.}
 #'  If no significant result is obtained, a dose-response 2pLL curve is fitted,
-#'  inoring the information on (exposure) time.
+#'  ignoring the information on (exposure) time.
 #' @details For further details on the td2pLL model, check [fit_td2pLL()].
 #'  For details on the ANOVA used, see [td2pLL_anova()]. More over,
 #'  the entire procedure is explained in duda et al. (2021).
@@ -51,7 +51,7 @@
 #' data_subset <- cytotox[cytotox$compound == "CHL", c("expo", "dose", "resp")]
 #' colnames(data_subset)[1] <- "time"
 #' TDR_res <- TDR(data = data_subset)
-#' # Pre-test rejected time dependency, so a  td2pLL model is the result
+#' # Pre-test did not reject time dependency, so a  td2pLL model is the result
 #' # Note that the interactive Plot is in the Viewer panel, not in the Plots panel
 #' plot(TDR_res$fit)
 
