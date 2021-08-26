@@ -41,9 +41,19 @@ get_starting_values <- function(data, h_start = 2, c0_start = 0) {
   ED50_start_high_time <- interp_ED50(data = data_high_time_mean)
 
   # To avoid convergence problems (so that gamma never 0)
-  if(ED50_start_low_time == ED50_start_high_time) {
-    ED50_start_high_time = 0.95 * ED50_start_low_time
-  }
+
+  # if(ED50_start_low_time == ED50_start_high_time) {
+  #   ED50_start_high_time = 0.95 * ED50_start_low_time
+  # }
+
+  if((ED50_start_low_time < ED50_start_high_time) &
+     ED50_start_low_time > 0.95 * ED50_start_high_time)
+    ED50_start_low_time <- 0.95 * ED50_start_high_time
+
+  if((ED50_start_low_time > ED50_start_high_time) &
+     ED50_start_low_time < 1.05 * ED50_start_high_time)
+    ED50_start_low_time <- 1.05 * ED50_start_high_time
+
 
 
   time_low_high <- range(data$time)

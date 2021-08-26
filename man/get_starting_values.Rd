@@ -15,7 +15,7 @@ Optional starting value for the \code{h} parameter.
 Default is 2.}
 
 \item{c0_start}{(\code{numeric(1)})\cr
-Optional starting value for the trheshold parameter \code{c0}.
+Optional starting value for the threshold parameter \code{c0}.
 Default is 0.}
 }
 \value{
