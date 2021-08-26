@@ -5,7 +5,7 @@ test_that("Data must be a data.frame", {
                'data must be a numeric data.frame with colnames "time", "dose" and "resp"')
 })
 
-test_that("At least two doses and times", {
+test_that("At least two doses and three times", {
   test_data = cytotox[cytotox$compound == "ASP" & cytotox$expo == 2, c("expo", "dose", "resp")]
   colnames(test_data)[1] <- "time"
   expect_error(fit_td2pLL(data = test_data), "Data must contain at least 3 different times.")

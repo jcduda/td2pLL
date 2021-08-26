@@ -96,9 +96,9 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
     stop(msg_1)
   if(ncol(data) < 3 | !all(apply(data, 2, is.numeric)))
     stop(msg_1)
-  if (!(all(colnames(data) %in% c("time", "dose", "resp")))) {
+  if (!(all(c("time", "dose", "resp") %in% colnames(data))))
     stop(msg_1)
-  }
+
 
 
   doses <- unique(data$dose)

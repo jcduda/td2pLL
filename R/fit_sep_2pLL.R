@@ -9,7 +9,7 @@
 #'  (or -b in the often used parametrization of the 4pLL model) is
 #'  shared across the dose-response models of the (exposure) times.
 #' @param data (`data.frame()`)\cr
-#'  Data frame containing the `dose`, `resp` and `time` variable.
+#'  Data frame containing `dose` (numeric), `resp` (numeric) and `time` (factor) variables.
 #' @details The model serves as the full model, denoted by Q_1 in duda et al.
 #'  (2021). `fit_sep_2pLL` is a wrapper function that uses the
 #'  [drc::drm()] function. At first, the optimization method
@@ -22,31 +22,61 @@
 
 
 fit_sep_2pLL <- function(data) {
+
   time <- NULL
-  data$time <- as.factor(data$time)
+
+  msg_1 <- 'data must be a data.frame with colnames "time" (factor),
+  "dose" (numeric) and "resp" (numeric)'
+  if(is.null(data) | all(is.na(data)))
+    stop(msg_1)
+  if(!is.data.frame(data))
+    stop(msg_1)
+  if(ncol(data) < 3)
+    stop(msg_1)
+  if (!(all(c("time", "dose", "resp") %in% colnames(data))))
+    stop(msg_1)
+
+  if(!is.factor(data$time)){
+    message("For the ANOVA pre-test, data$time was changed to a factor variable.")
+    data$time <- as.factor(data$time)
+  }
+
+  if(!is.numeric(data$dose) | !is.numeric(data$dose) | !is.factor(data$time))
+    stop(msg_1)
+
+
+  doses <- unique(data$dose)
+  if(length(doses) < 2)
+    stop("Data must contain at least two different doses.")
+
+  if(length(unique(data$time)) < 2)
+    stop("Data must contain at least two different times.")
+
+
+
   tryCatch(
     {
       drc::drm(resp ~ dose,
-        curveid = time,
-        data = data,
-        fct = drc::LL.2(upper = 100),
-        pmodels = list(
-          ~1, # h
-          ~time
-        )
+               curveid = time,
+               data = data,
+               fct = drc::LL.2(upper = 100),
+               pmodels = list(
+                 ~1, # h
+                 ~time
+               )
       ) #
     },
     error = function(cond) {
       return(
         drc::drm(resp ~ dose,
-          curveid = time,
-          control = drc::drmc(method = "Nelder-Mead"),
-          data = data,
-          fct = drc::LL.2(upper = 100),
-          pmodels = list(
-            ~1, # h
-            ~time
-          )
+                 curveid = time,
+                 control = drc::drmc(method = "Nelder-Mead"),
+                 data = data,
+                 fct = drc::LL.2(upper = 100),
+                 pmodels = list(
+                   ~1, # h
+                   ~time
+                 )
         )
       )
     }

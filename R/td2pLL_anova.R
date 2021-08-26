@@ -36,8 +36,27 @@
 
 
 td2pLL_anova <- function(data, alpha = 0.05) {
+  stopifnot(length(alpha) == 1)
   stopifnot(is.numeric(alpha) & alpha > 0 & alpha < 1)
   stopifnot(is.na(setdiff(colnames(data), c("time", "dose", "resp"))))
+
+  msg_1 <- 'data must be a numeric data.frame with colnames "time", "dose" and "resp"'
+  if(is.null(data) | all(is.na(data)))
+    stop(msg_1)
+  if(!is.data.frame(data))
+    stop(msg_1)
+  if(ncol(data) < 3 | !all(apply(data, 2, is.numeric)))
+    stop(msg_1)
+  if (!(all(colnames(data) %in% c("time", "dose", "resp")))) {
+    stop(msg_1)
+  }
+
+  doses <- unique(data$dose)
+  if(length(doses) < 2)
+    stop("Data must contain at least two different doses.")
+
+  if(length(unique(data$time)) < 2)
+    stop("Data must contain at least two different times.")
 
   if(!(is.factor(data$time))) data$time <- as.factor(data$time)
 

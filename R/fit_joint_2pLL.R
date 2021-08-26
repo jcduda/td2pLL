@@ -23,6 +23,22 @@
 #' @return An object of class `drc`.
 
 fit_joint_2pLL <- function(data) {
+
+  msg_1 <- 'data must be a numeric data.frame with colnames "dose" and "resp"'
+  if(is.null(data) | all(is.na(data)))
+    stop(msg_1)
+  if(!is.data.frame(data))
+    stop(msg_1)
+  if(ncol(data) < 2 | !all(apply(data, 2, is.numeric)))
+    stop(msg_1)
+  if (!(all(c("dose", "resp") %in% colnames(data))))
+    stop(msg_1)
+
+
+  doses <- unique(data$dose)
+  if(length(doses) < 2)
+    stop("Data must contain at least two different doses.")
+
   tryCatch(
     {
       drc::drm(resp ~ dose,
