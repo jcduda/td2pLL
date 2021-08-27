@@ -27,7 +27,8 @@ Imports:
     plotly (>= 4.9.2.1),
     tidyr (>= 1.1.2),
     rlang (>= 0.4.7),
-    graphics
+    graphics,
+    minpack.lm(>= 1.2.1)
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
