@@ -29,11 +29,12 @@ fit_joint_2pLL <- function(data) {
     stop(msg_1)
   if(!is.data.frame(data))
     stop(msg_1)
-  if(ncol(data) < 2 | !all(apply(data, 2, is.numeric)))
+  if(ncol(data) < 2)
     stop(msg_1)
   if (!(all(c("dose", "resp") %in% colnames(data))))
     stop(msg_1)
-
+ if(!(is.numeric(data$dose) & is.numeric(data$resp)))
+    stop(msg_1)
 
   doses <- unique(data$dose)
   if(length(doses) < 2)
