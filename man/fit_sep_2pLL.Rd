@@ -8,7 +8,7 @@ fit_sep_2pLL(data)
 }
 \arguments{
 \item{data}{(\code{data.frame()})\cr
-Data frame containing the \code{dose}, \code{resp} and \code{time} variable.}
+Data frame containing \code{dose} (numeric), \code{resp} (numeric) and \code{time} (factor) variables.}
 }
 \value{
 An object of class \code{drc}.

@@ -51,6 +51,9 @@ td2pLL_anova <- function(data, alpha = 0.05) {
     stop(msg_1)
   }
 
+  if(any(is.na(data)))
+    stop("There must not be missing values in data.")
+
   doses <- unique(data$dose)
   if(length(doses) < 2)
     stop("Data must contain at least two different doses.")

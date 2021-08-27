@@ -98,14 +98,20 @@ fit_td2pLL <- function(data, start = NULL, control = NULL, lower = NULL,
     stop(msg_1)
   if (!(all(c("time", "dose", "resp") %in% colnames(data))))
     stop(msg_1)
+  if(any(is.na(data)))
+    stop("There must not be missing values in data.")
 
+  if(min(data$time) <= 0)
+    stop("Time cannot be smaller or equal to 0.")
 
+  if(min(data$dose) < 0)
+    stop("Dose cannot be smaller than 0.")
 
   doses <- unique(data$dose)
   if(length(doses) < 2)
     stop("Data must contain at least two different doses.")
 
-  if(length(unique(data$time)) < 2)
+  if(length(unique(data$time)) < 3)
     stop("Data must contain at least 3 different times.")
 
   if (is.null(start)) {
