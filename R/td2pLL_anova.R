@@ -58,7 +58,10 @@ td2pLL_anova <- function(data, alpha = 0.05) {
   if(length(unique(data$time)) < 2)
     stop("Data must contain at least two different times.")
 
-  if(!(is.factor(data$time))) data$time <- as.factor(data$time)
+  if(!is.factor(data$time)){
+    message("For the ANOVA pre-test, data$time was changed to a factor variable.")
+    data$time <- as.factor(data$time)
+  }
 
   # dose-response curve with separate ED50 parameters, but shared h
   drm_seperate <- fit_sep_2pLL(data = data)
