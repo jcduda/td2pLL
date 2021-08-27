@@ -23,13 +23,13 @@ test_that("Do not reject too often if there is no time-effect", {
   set.seed(1905)
   for(i in 1:n_test){
 
-  curr_data <- test_data
-  curr_data$resp <- pmax(curr_data$resp + rnorm(nrow(curr_data), sd = 10), 0)
+    curr_data <- test_data
+    curr_data$resp <- pmax(curr_data$resp + rnorm(nrow(curr_data), sd = 10), 0)
 
-  res <-suppressMessages(td2pLL_anova(curr_data))
+    res <-suppressMessages(td2pLL_anova(curr_data))
 
-  if(res$signif == TRUE)
-    reject_no_effect <- reject_no_effect + 1
+    if(res$signif == TRUE)
+      reject_no_effect <- reject_no_effect + 1
 
   }
 
@@ -37,7 +37,7 @@ test_that("Do not reject too often if there is no time-effect", {
 
 })
 
-test_that("Detect time-dependencies if present", {
+test_that("Detect time-effect if present", {
 
   test_data <- data.frame(time = rep(c(1, 3, 7), each = 16),
                           dose = rep(seq(0, 1, length = 4), each = 4))
@@ -59,7 +59,7 @@ test_that("Detect time-dependencies if present", {
     curr_data$resp <- pmax(curr_data$resp + rnorm(nrow(curr_data), sd = 10), 0)
 
     plot_td2pLL(td2pLL_coefs = c(h = 2, gamma = 1, c0 = 0.2, delta = 0.3),
-               add_ext_data = curr_data, xaxis_scale = "linear")
+                add_ext_data = curr_data, xaxis_scale = "linear")
 
     res <-suppressMessages(td2pLL_anova(curr_data))
 
