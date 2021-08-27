@@ -82,7 +82,7 @@ ED50 value at all (exposure) times.
 }
 \details{
 The non-linear fitting minimizes the sum of squared errors.
-We use the \code{nlsLM} function from the \link{minpack.lm} package.
+We use the \code{nlsLM} function from the \link[minpack.lm:nlsLM]{minpack.lm::nlsLM} package.
 Note that the fitting assumes the response data to be measured in percent,
 i.e. ranges between 100 and 0 where it is assumed to be 100 at
 dose=0 and decreases with increasing doses.
@@ -93,19 +93,6 @@ data_subset <- cytotox[cytotox$compound == "ASP", c("expo", "dose", "resp")]
 colnames(data_subset)[1] <- "time"
 fit <- fit_td2pLL(data = data_subset)
 plot(fit, add_data = data_subset)
-Note that you can also plot a td2pLL model where simply the parameters are
-specified using [plot_td2pLL].
-Learn how to implement checks!
-# Check if for no time-effect fitting still works:
-set.seed(1234)
-for(i in 1:100){
-print(i)
-data_subset <- cytotox[cytotox$compound == "ASP" & cytotox$expo == 2, c("expo", "dose", "resp")]
-colnames(data_subset)[1] <- "time"
-append1 <- data_subset \%>\% mutate(time = 1); append2 <- data_subset \%>\% mutate(time = 7)
-data_subset <- rbind.data.frame(append1, data_subset, append2)
-data_subset$resp <- data_subset$resp + rnorm(nrow(data_subset), sd = 4)
-fit <- fit_td2pLL(data = data_subset)
-plot(fit, add_data = data_subset)
-}
+# Note that you can also plot a td2pLL model where simply the parameters are
+# specified using [plot_td2pLL].
 }
