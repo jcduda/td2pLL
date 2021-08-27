@@ -57,10 +57,24 @@
 
 TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
   stopifnot(is.data.frame(data))
+  if(any(is.na(data)))
+    stop("There must not be missing values in data.")
   stopifnot(all(colnames(data) %in% c("time", "dose", "resp")))
   stopifnot(is.numeric(data$time) &
     is.numeric(data$dose) &
     is.numeric(data$resp))
+
+  if(length(unique(data$dose)) < 2)
+    stop("There must be at least two different dose levels.")
+
+  if(length(unique(data$time)) < 3)
+    stop("There must be at least three different time levels.")
+
+  if(min(data$time) <= 0)
+    stop("Time cannot be smaller or equal to 0.")
+
+  if(min(data$dose) < 0)
+    stop("Dose cannot be smaller than 0.")
 
   stopifnot(is.numeric(alpha))
   stopifnot(length(alpha) == 1)
@@ -88,6 +102,12 @@ TDR <- function(data, alpha = 0.05, strict_stop = FALSE, ...) {
       was set, no model is fitted in the second step.")
     return(list(pretest = res_pretest, fit = NA))
   }
+
+  if(res_pretest$conv == FALSE & strict_stop == FALSE)
+    warning("The ANOVA pre-test did not converge. Since strict_stop=FALSE
+            was set,this will be handled as if time-dependency was NOT
+            rejected and the time componenet will be ignored in the fitting step.")
+
 
   if ((res_pretest$conv == FALSE & strict_stop == FALSE) |
     res_pretest$signif == FALSE) {
