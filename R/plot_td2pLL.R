@@ -17,8 +17,8 @@
 #'  dose_lim = c(0.1, 10), time_lim = c(1, 10), xaxis_scale = "log",
 #'  yaxis_scale = "linear")
 #'  # If time and response is on log-scale and gamme = 1(=original Haber's law
-#'  with equal contribution of time and exposure), then one can clearly see
-#'  haber's law since the red ED50 is a line, if viewed from above.
+#'  # with equal contribution of time and exposure), then one can clearly see
+#'  # haber's law since the red ED50 is a line, if viewed from above.
 #' plot_td2pLL(td2pLL_coefs = c(h = 1.5, delta = 5, gamma = 1, c0 = 0.1),
 #'  dose_lim = c(0.1, 10), time_lim = c(1, 10), xaxis_scale = "log",
 #'  yaxis_scale = "log")
