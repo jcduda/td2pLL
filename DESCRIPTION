@@ -29,7 +29,7 @@ Imports:
     rlang (>= 0.4.7),
     graphics,
     minpack.lm(>= 1.2.1)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests: 
     Rsolnp,

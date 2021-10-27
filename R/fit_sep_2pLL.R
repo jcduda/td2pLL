@@ -58,8 +58,9 @@ fit_sep_2pLL <- function(data) {
     {
       drc::drm(resp ~ dose,
                curveid = time,
+               control = drc::drmc(method = "Nelder-Mead"),
                data = data,
-               fct = drc::LL.2(upper = 100),
+               fct = drc::LL2.2(upper = 100),
                pmodels = list(
                  ~1, # h
                  ~time
@@ -70,9 +71,8 @@ fit_sep_2pLL <- function(data) {
       return(
         drc::drm(resp ~ dose,
                  curveid = time,
-                 control = drc::drmc(method = "Nelder-Mead"),
                  data = data,
-                 fct = drc::LL.2(upper = 100),
+                 fct = drc::LL2.2(upper = 100),
                  pmodels = list(
                    ~1, # h
                    ~time
