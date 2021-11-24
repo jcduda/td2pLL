@@ -6,4 +6,6 @@
 #' @importFrom rlang .data
 #' @importFrom graphics persp
 #' @importFrom utils setTxtProgressBar txtProgressBar
+#' @importFrom MASS ginv
+#' @import magick
 NULL
