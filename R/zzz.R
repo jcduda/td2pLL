@@ -8,4 +8,5 @@
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom MASS ginv
 #' @import magick
+#' @import ICAOD
 NULL

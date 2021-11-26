@@ -179,6 +179,9 @@ grid_opt <- function(u_dose, u_time, iter = 10,
 #       gif_path = "./attics/optDesgif2_beta_1",
 #       gif_name = "optDes")
 
+# plot_td2pLL(td2pLL_coefs = c(h=1, delta = 0.5, gamma = 2, c0 = 0.01),
+#             dose_lim = c(exp(-8), 1), time_lim = c(1, 10))
+
 
 #
 #
@@ -214,8 +217,9 @@ grid_opt <- function(u_dose, u_time, iter = 10,
 #                        gif_path = "./attics/optDesgif4_compare_beta_1",
 #                        gif_name = "optDes")
 
-
-
+#
+# plot_td2pLL(td2pLL_coefs = c(h=2, delta = 0.2, gamma = 1.3, c0 = 0.2),
+#             dose_lim = c(exp(-3), 1), time_lim = c(1, 10))
 #
 #
 # opt5 <- grid_opt(u_dose = exp(seq(-8, 0, 0.1)),

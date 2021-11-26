@@ -13,7 +13,6 @@
 #' @param finfo_inv (optimal `matrix()`)
 #'  Inverse of Fisher Information matrix.
 #' @inheritParams opt_des_td2pLL
-#' @export
 
 dcrit_equ_td2pLL <- function(M_x, des, theta, finfo_inv = NULL)
 {
