@@ -62,7 +62,6 @@ td2pLL_anova <- function(data, alpha = 0.05) {
     stop("Data must contain at least two different times.")
 
   if(!is.factor(data$time)){
-    message("For the ANOVA pre-test, data$time was changed to a factor variable.")
     data$time <- as.factor(data$time)
   }
 

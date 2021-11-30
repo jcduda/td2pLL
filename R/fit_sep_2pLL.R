@@ -37,7 +37,6 @@ fit_sep_2pLL <- function(data) {
     stop(msg_1)
 
   if(!is.factor(data$time)){
-    message("For the ANOVA pre-test, data$time was changed to a factor variable.")
     data$time <- as.factor(data$time)
   }
 
