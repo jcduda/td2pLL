@@ -4,7 +4,7 @@
 \alias{plot_td_des}
 \title{Visualize design calculated with \link{td_opt}}
 \usage{
-plot_td_des(td_opt_des, label_weights = T, log10_dose = T)
+plot_td_des(td_opt_des, label_weights = TRUE, log10_dose = TRUE)
 }
 \arguments{
 \item{td_opt_des}{Optimal design for td2pLL model calculated with \link{td_opt}}

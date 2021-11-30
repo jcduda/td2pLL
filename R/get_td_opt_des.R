@@ -1,8 +1,8 @@
 #' @title Filtering the design from a minimax object
-#' @description From a minimax object generated with [ICAOD::locally()]
+#' @description From a minimax object generated with [locally()]
 #' or [td2pLL::td_opt()], extract only the design, i.e. the support
 #' points and weights
-#' @param td_top_des An objetc of class `minimax`
+#' @param td_opt_des An object of class `minimax` from the [ICAOD] package
 #' @return A data.frame with columns `time` and `dose` for the support points
 #'  and `weight` for the corresponding weight
 

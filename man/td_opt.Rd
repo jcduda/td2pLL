@@ -6,7 +6,7 @@
 \usage{
 td_opt(
   param,
-  Emax_known = F,
+  Emax_known = FALSE,
   lx = c(1, exp(-8)),
   ux = c(10, 1),
   iter = 1000,
@@ -27,33 +27,53 @@ gather information on the unknown, maximal effect \code{Emax}. \cr
 Note that the mean control level \code{e0} which is assumed \code{e0=100} in the
 typical td2pLL model is, for optima design planning, always assumed to be
 unknown as otherwise no control measurements in dose=0 would be porposed
-by the optimal design.
-@param lx (\code{numeric(2)}) \cr
+by the optimal design.}
+
+\item{lx}{(\code{numeric(2)}) \cr
 Minimal value for time and dose. Note that for dose, you cannot give
 a lower bound of zero due to technical reasons.
 Instead, provide a very small lower bound (default is exp(-8) = 0.00034)
-that represents zero.
-@param ux (\code{numeric(2)}) \cr
-Maximal value for time and dose.
-@param iter (\code{integer(1)}) \cr
-Number of iterations in the Imperialist Competitive Algorithm. Default is 1000.
-@param ICA.control(\code{list()}) \cr
-Additional control parameters passed to the \link[ICAOD:locally]{ICAOD::locally} function.
-See \code{\link[ICAOD:ICA.control]{ICAOD::ICA.control()}} for details.
-@return An object of class \code{minimax} generated with \code{\link[ICAOD:locally]{ICAOD::locally()}}.
+that represents zero.}
+
+\item{ux}{(\code{numeric(2)}) \cr
+Maximal value for time and dose.}
+
+\item{iter}{(\code{integer(1)}) \cr
+Number of iterations in the Imperialist Competitive Algorithm. Default is 1000.}
+
+\item{ICA.control}{(\code{list()}) \cr
+Additional control parameters passed to the \code{\link[=locally]{locally()}} function.
+See \code{\link[=ICA.control]{ICA.control()}} for details.}
+}
+\value{
+An object of class \code{minimax} generated with \code{\link[=locally]{locally()}}.
 For \code{Emax_known} = \code{TRUE}, the design has 7 support points. Otherwise,
 it has 8.
-@examples
-td_opt_1 <- td_opt(param = c(h = 2, delta = 0.2, gamma = 1.3, c0 = 0.2),
-Emax_known = T, ICA.control = c(ncount = 300, rseed = 1905))
-plot_td_des(td_opt_1)
-plot_td_dcrit_equ(td_opt_2)
-td_opt_2 <- td_opt(param = c(h = 2, delta = 0.2, gamma = 1.3, c0 = 0.2),
-Emax_known = F, ICA.control = c(ncount = 300, rseed = 1905))}
 }
 \description{
 If prior knowledge on the (rough) model shape is available,
 an optimal experimental design for a td2pLL model can be calculated.
 The numerical back bone is the Imperialist Competitive Algorithm
 implemented by Masoudi et al (2017).
+}
+\examples{
+ td_opt_1 <- td_opt(param = c(h = 2, delta = 0.2, gamma = 1.3, c0 = 0.2),
+   Emax_known = TRUE,
+    ICA.control = list(ncount = 300, rseed = 1905, trace = FALSE),
+    iter = 600)
+ td_opt_1
+ plot_td_des(td_opt_1)
+ plot_td_dcrit_equ(td_opt_1)
+ td_opt_2 <- td_opt(param = c(h = 2, delta = 0.2, gamma = 1.3, c0 = 0.2),
+   Emax_known = FALSE,
+    ICA.control = list(ncount = 300, rseed = 1905, revol_rate = 0.5, trace = FALSE),
+    iter = 600)
+ td_opt_2
+ plot_td_des(td_opt_2)
+ plot_td_dcrit_equ(td_opt_2)
+ td_opt_3 <- td_opt(param = c(h = 1, delta = 0.5, gamma = 2, c0 = 0.01),
+   Emax_known = TRUE, ICA.control = list(ncount = 300, rseed = 1905, trace = FALSE),
+    iter = 1000)
+ plot_td_des(td_opt_3)
+ plot_td_dcrit_equ(td_opt_3, plot_theta = 100, n_grid = 100, dose_lim = c(0, 0.2))
 }
