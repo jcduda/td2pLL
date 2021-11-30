@@ -1,4 +1,4 @@
-#' @title Information matrix for [ICAOD::locally()] assuming unknown e0 and known eMax
+#' @title Information matrix for [locally()] assuming unknown e0 and known eMax
 #' @description If e0 is assumed unknown and eMax is assumed known in the td2pLL model,
 #'  the optimal design will propose a support point in dose=0, but not in the maximal dose.
 #' To assume additionally that eMax is unknown, use [icaod_info_noEmax].
@@ -25,11 +25,19 @@ icaod_info <- function(x, w, param){
                      delta = param["delta"], gamma = param["gamma"], c0 = param["c0"])
     M <- M + t(a) %*% a * w[i]
   }
+
+  # Unfortunately much slower:
+  # M <- matrix(rowSums(apply(data.frame(time = times, dose = doses, weight = w), 1, function(x){
+  #   a <- grad_td2pLL(time = x[1], dose = x[2], h = param["h"],
+  #               delta = param["delta"], gamma = param["gamma"], c0 = param["c0"])
+  #   t(a) %*% a * x[3]
+  # })), nrow = 5, ncol = 5)
+
   return(M)
 }
 
 
-#' @title Information matrix for [ICAOD::locally()] assuming unknown e0 and unknown eMax
+#' @title Information matrix for [locally()] assuming unknown e0 and unknown eMax
 #' @description If e0 is assumed unknown and eMax is assumed unknown in the td2pLL model
 #' (where usually we assume e0=100 and eMax=100 for dytotoxicity assays)
 #'  the optimal design will propose a support point in dose=0 and in the maximal dose.
