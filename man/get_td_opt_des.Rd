@@ -7,14 +7,14 @@
 get_td_opt_des(td_opt_des)
 }
 \arguments{
-\item{td_top_des}{An objetc of class \code{minimax}}
+\item{td_opt_des}{An object of class \code{minimax} from the \link{ICAOD} package}
 }
 \value{
 A data.frame with columns \code{time} and \code{dose} for the support points
 and \code{weight} for the corresponding weight
 }
 \description{
-From a minimax object generated with \code{\link[ICAOD:locally]{ICAOD::locally()}}
+From a minimax object generated with \code{\link[=locally]{locally()}}
 or \code{\link[=td_opt]{td_opt()}}, extract only the design, i.e. the support
 points and weights
 }

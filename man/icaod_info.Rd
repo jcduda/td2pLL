@@ -2,7 +2,7 @@
 % Please edit documentation in R/icaod_info.R
 \name{icaod_info}
 \alias{icaod_info}
-\title{Information matrix for \code{\link[ICAOD:locally]{ICAOD::locally()}} assuming unknown e0 and known eMax}
+\title{Information matrix for \code{\link[=locally]{locally()}} assuming unknown e0 and known eMax}
 \usage{
 icaod_info(x, w, param)
 }
