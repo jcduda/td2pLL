@@ -27,8 +27,13 @@ Imports:
     plotly (>= 4.9.2.1),
     tidyr (>= 1.1.2),
     rlang (>= 0.4.7),
+    ggplot2 (>= 3.3.5),
+    ggrepel (>= 0.9.1),
+    ICAOD (>= 1.0.1),
+    magick (>= 2.7.3),
     graphics,
-    minpack.lm(>= 1.2.1)
+    MASS,
+    minpack.lm (>= 1.2.1)
 RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests: 
