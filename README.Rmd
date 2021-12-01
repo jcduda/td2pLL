@@ -10,12 +10,12 @@ output:
 
 
 ```{r setup, include = FALSE}
-# knitr::opts_chunk$set(
-#   collapse = TRUE,
-#   comment = "#>",
-#   fig.path = "man/figures/README-",
-#   out.width = "100%"
-# )
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
 # library(knitr)
 # library(td2pLL)
 ```
