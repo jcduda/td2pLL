@@ -4,4 +4,6 @@
 ^notes_and_to_do\.txt$
 ^LICENSE\.md$
 ^README\.Rmd$
+^README\.md$
 ^README\.html$
+^README_files$
