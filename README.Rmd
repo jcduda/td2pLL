@@ -153,7 +153,7 @@ relationship.
 The numerical back-bone is the Imperialist Competitive Algorithm (ICA)
 by Masoudi et al. (2017).
 
-It will take a few minutes to be calculated. Change to `trace=TRUE`
+It will take a few minutes to be calculated. Change to `plot_cost=TRUE`
 to follow the optimization process.
 
 ```{r}
@@ -187,6 +187,7 @@ dose = 0 and time = 6.2, one can euivalently choose
 ```{r}
 plot_td_des(td_opt_1)
 ```
+
 One can check if the design is indeed optimal with a sensitivity plot.
 If the entire plot is approximately below 0 at all points in the
 design space and approximately zero at the proposed design points,
