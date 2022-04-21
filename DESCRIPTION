@@ -5,7 +5,7 @@ Title: Fitting a time-dose two-parameter log-logistic model to
 Version: 1.0.0
 Authors@R: person("Julia", "Duda", email = "duda@statistik.tu-dortmund.de",
   role = c("aut", "cre"))
-Description: This package is in progress. It will offer functions to fit and plot a time-dose 
+Description: This package offer functions to fit and plot a time-dose 
     two-parameter log-logistic (td2pLL) model to time-dose-response data with
     a special aim for cytotoxicity data. The model is an extended model of the
     famous two-parameter log-logistic (2pLL) model for dose-response data. The
@@ -14,8 +14,7 @@ Description: This package is in progress. It will offer functions to fit and plo
     of the (exposure) time on the dose-response curve is performed to
     conditionally calculate the td2pLL or a 2pLL model, is integrated, too.
     The package also helps with calculting and visualizing optimal experimental
-    designs for (exposure) time-response experiments. See the work of Duda and
-    Rahnenführer (2021) for details.
+    designs for (exposure) time-response experiments. 
 License: MIT + file LICENSE
 URL: https://github.com/jcduda/td2pLL
 Encoding: UTF-8
