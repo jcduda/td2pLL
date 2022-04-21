@@ -2,7 +2,7 @@ Package: td2pLL
 Type: Package
 Title: Fitting a time-dose two-parameter log-logistic model to
     time-dose-response data
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: person("Julia", "Duda", email = "duda@statistik.tu-dortmund.de",
   role = c("aut", "cre"))
 Description: This package is in progress. It will offer functions to fit and plot a time-dose 
