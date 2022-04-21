@@ -1,18 +1,17 @@
-# Bigger next goal: Implement optimal design calculation
 
-# Smaller side goal: Figure how to use pseuso-log or broken axis in plotly (Likely much work and little benefit)
+TODOS until resumbission:
 
+- Write vignette
+- Remove uncommented garbage
+- Maybe add more tests
 # Check plot_ly reference for ticks:
 https://plotly.com/r/reference/#Layout_and_layout_style_objects
 
-# Finalize plot.td2pLL function
-	- model class might still be old one (ext3pLL), update to td2pLL
-	- function description missing / updates
-	- for xaxis_scla and y_axis_scale, consider this entry of plotly_reference:
-		type 
-			Parent: layout.scene.xaxis 
-			Type: enumerated , one of ( "-" | "linear" | "log" | "date" | "category" ) 
-			Default: "-" 
-			Sets the axis type. By default, plotly attempts to determined the axis type
-			by looking into the data of the traces that referenced the axis in question.
+
+TODOs for new aspect: Optimal design
+
+-Maybe with Ludger: Try to improve algorithm using knowledge on optimal design structure
+- Add a function that proposes discrete optimal design given n
+- Function that makes optimal design for practice, i.e.: negative control per exposure maximal dose per exposure
+- How to adapt the steepness parameter (allow decreasing steepnes with increasing exposure duration)?
 
