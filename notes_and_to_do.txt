@@ -1,3 +1,7 @@
+# Bigger next goal: Implement optimal design calculation
+
+# Smaller side goal: Figure how to use pseuso-log or broken axis in plotly (Likely much work and little benefit)
+
 # Check plot_ly reference for ticks:
 https://plotly.com/r/reference/#Layout_and_layout_style_objects
 
@@ -12,11 +16,3 @@ https://plotly.com/r/reference/#Layout_and_layout_style_objects
 			Sets the axis type. By default, plotly attempts to determined the axis type
 			by looking into the data of the traces that referenced the axis in question.
 
-# Ask Jakob: Figuring out all the "no visible global function definition" in the "check()" output
-
-
-# add plotting function for a TDR (time-dose-response anova pipeline)
-	- Distinguish between the cases td2pLL, 2pLL and no model (non-convergence)
-
-# Setup branch to improve optimization: Implement grid-search and recalculate good
-# parameter ranges without helper assumption min(time) = 1
