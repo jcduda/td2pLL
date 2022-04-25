@@ -76,16 +76,4 @@ grad_td2pLL_noEmax <- function(time, dose, h, delta, gamma, c0, Emax){
 }
 
 
-#' @export
-#' @title Gradient of td2pLL for PSO
-#' @description Wrapper function of [grad_td2pLL] to pass
-#' it to the [psoOptDesign] function as argument gradient.
-#' @param x (`numeric(2)`) \cr
-#'   Contains time and dose
-#' @inheritParams opt_des_td2pLL
 
-grad_td2pLL_pso <- function(x, theta){
-  t(grad_td2pLL(time = x[1], dose = x[2],
-                h = theta[1], delta = theta[2], gamma = theta[3], c0 = theta[4])
-  )
-}
