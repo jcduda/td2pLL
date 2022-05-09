@@ -11,7 +11,7 @@ model is defined as
 
 ![
 f(t, d) = 100-100\\frac{d^h}{ED\_{50}(t)^h + d^h}
-](https://latex.codecogs.com/png.latex?%0Af%28t%2C%20d%29%20%3D%20100-100%5Cfrac%7Bd%5Eh%7D%7BED_%7B50%7D%28t%29%5Eh%20%2B%20d%5Eh%7D%0A "
+](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0Af%28t%2C%20d%29%20%3D%20100-100%5Cfrac%7Bd%5Eh%7D%7BED_%7B50%7D%28t%29%5Eh%20%2B%20d%5Eh%7D%0A "
 f(t, d) = 100-100\frac{d^h}{ED_{50}(t)^h + d^h}
 ")
 
@@ -19,7 +19,7 @@ with
 
 ![
 ED\_{50} =\\Delta \\cdot t^{-\\gamma} + C\_0 .
-](https://latex.codecogs.com/png.latex?%0AED_%7B50%7D%20%3D%5CDelta%20%5Ccdot%20t%5E%7B-%5Cgamma%7D%20%2B%20C_0%20.%0A "
+](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%0AED_%7B50%7D%20%3D%5CDelta%20%5Ccdot%20t%5E%7B-%5Cgamma%7D%20%2B%20C_0%20.%0A "
 ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 ")
 
@@ -34,13 +34,15 @@ devtools::install_github("jcduda/td2pLL")
 
 ``` r
 library(td2pLL)
+#> Warning: Paket 'td2pLL' wurde unter R Version 4.1.3 erstellt
 library(dplyr)
+#> Warning: Paket 'dplyr' wurde unter R Version 4.1.3 erstellt
 #> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
+#> Attache Paket: 'dplyr'
+#> Die folgenden Objekte sind maskiert von 'package:stats':
 #> 
 #>     filter, lag
-#> The following objects are masked from 'package:base':
+#> Die folgenden Objekte sind maskiert von 'package:base':
 #> 
 #>     intersect, setdiff, setequal, union
 data(cytotox)
@@ -98,15 +100,15 @@ nested anova it is checked if the time has an influence. Specifically, a
 2pLL model with upper and lower limit set to 100 and 0, respectively,
 that ignores the epxosure time component is the null model. The full
 model is a 2pLL model where for each exposure time, a different
-![ED\_{50}](https://latex.codecogs.com/png.latex?ED_%7B50%7D "ED_{50}")
+![ED\_{50}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;ED_%7B50%7D "ED_{50}")
 parameter is fitted. Only the
-![h](https://latex.codecogs.com/png.latex?h "h") parameter is shared
-across exposure times. If the anova test between these nested models is
-significant, an effect of the exposure time is assumed to be true. In
-thas case, a td2pLL model is fitted in the second step, the modeling
-step. If the pre-test does not yield a significant result, then the
-regualr 2pLL model with upper and lower limit 100 and 0, respectively,
-is fitted.
+![h](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;h "h")
+parameter is shared across exposure times. If the anova test between
+these nested models is significant, an effect of the exposure time is
+assumed to be true. In thas case, a td2pLL model is fitted in the second
+step, the modeling step. If the pre-test does not yield a significant
+result, then the regualr 2pLL model with upper and lower limit 100 and
+0, respectively, is fitted.
 
 For the data of the above chosen compound, ASP, an influence of the
 exposure time on the viability was detected.
@@ -148,12 +150,13 @@ TDR_res
 
 If we instead look at the measurements for the BOS compound and reduce
 the data set a bit to a more realistic size, the pre-test suggests to
-NOT model the time-dependency.
+NOT model the time-dependency. Therefore, only a one-dimensionl 2pLL
+model is fitted.
 
 Note that if the data set is large enough, the anova pre-test will
 always propose to model the time-effect as it will always find a
 significant (but possibly irrelevant) difference in
-![ED\_{50}](https://latex.codecogs.com/png.latex?ED_%7B50%7D "ED_{50}")
+![ED\_{50}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;ED_%7B50%7D "ED_{50}")
 values between exposure periods.
 
 This significance-vs-relevance problem is always present in classical
@@ -195,13 +198,14 @@ pharmaceutical dose-finding studies.
 
 For a D-optimal design of a td2pLL models, we no longer assume the
 response-mean at control to be known(
-![E\_0](https://latex.codecogs.com/png.latex?E_0 "E_0")=100). This has
-the effect that the optimal design proposes to have experiments at the
-control (dose=0), which cannot be dismissed in practical application.
+![E\_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;E_0 "E_0")=100).
+This has the effect that the optimal design proposes to have experiments
+at the control (dose=0), which cannot be dismissed in practical
+application.
 
 One can choose, however if the response-level for infitiely large doses
 should be assumed to be known
-(e.g. ![Emax = -100](https://latex.codecogs.com/png.latex?Emax%20%3D%20-100 "Emax = -100")
+(e.g. ![Emax = -100](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Emax%20%3D%20-100 "Emax = -100")
 for response=0 for large doses).
 
 If it is assumed to be known, the resulting optimal design will **not**
@@ -212,8 +216,8 @@ further knowledge about the dose-time-response relationship.
 The numerical back-bone is the Imperialist Competitive Algorithm (ICA)
 by Masoudi et al. (2017).
 
-It will take a few minutes to be calculated. Change to `trace=TRUE` to
-follow the optimization process.
+It will take a few minutes to be calculated. Change to `plot_cost=TRUE`
+to follow the optimization process.
 
 ``` r
 td_opt_1 <- td_opt(param = c(h = 2, delta = 0.2, gamma = 1.3, c0 = 0.2),
@@ -292,7 +296,7 @@ td_opt_1
 #>  Total number of successful revolution moves: 576
 #>  Convergence: Maximum_Iteration
 #>  Total number of successful assimilation moves: 10293
-#>  CPU time: 79.64  seconds!
+#>  CPU time: 81.43  seconds!
 ```
 
 The final design contains 7 time-dose points, where one will be placed
@@ -311,9 +315,10 @@ one can euivalently choose
 plot_td_des(td_opt_1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" /> One
-can check if the design is indeed optimal with a sensitivity plot. If
-the entire plot is approximately below 0 at all points in the design
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+One can check if the design is indeed optimal with a sensitivity plot.
+If the entire plot is approximately below 0 at all points in the design
 space and approximately zero at the proposed design points, then the
 design is D-optimal for the assumed paramter.
 
