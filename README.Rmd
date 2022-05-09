@@ -45,7 +45,7 @@ ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 
 ``` {r, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("jcduda/td2pLL")
+devtools::install_github("jcduda/td2pLL", build_vignettes = TRUE)
 ```
 
 ## Example 1: Plot a td2pLL model fit

@@ -27,14 +27,13 @@ ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jcduda/td2pLL")
+devtools::install_github("jcduda/td2pLL", build_vignettes = TRUE)
 ```
 
 ## Example 1: Plot a td2pLL model fit
 
 ``` r
 library(td2pLL)
-#> Warning: Paket 'td2pLL' wurde unter R Version 4.1.3 erstellt
 library(dplyr)
 #> Warning: Paket 'dplyr' wurde unter R Version 4.1.3 erstellt
 #> 
@@ -296,7 +295,7 @@ td_opt_1
 #>  Total number of successful revolution moves: 576
 #>  Convergence: Maximum_Iteration
 #>  Total number of successful assimilation moves: 10293
-#>  CPU time: 81.43  seconds!
+#>  CPU time: 91.68  seconds!
 ```
 
 The final design contains 7 time-dose points, where one will be placed
