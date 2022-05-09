@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-**This package is in development.** 
+
 
 The goal of td2pLL is to fit and display time-dose two-parameter log-logistic (td2pLL)  models to appropriate data, e.g. cytotoxicity data and to calculate D-optimal designs for
 experimental planning. The td2pLL model is defined as 
@@ -111,6 +111,7 @@ TDR_res
 If we instead look at the measurements for the BOS compound and reduce
 the data set a bit to a more realistic size, the pre-test
 suggests to NOT model the time-dependency.
+Therefore, only a one-dimensionl 2pLL model is fitted.
 
 Note that if the data set is large enough, the anova pre-test will
 always propose to model the time-effect as it will always find a
