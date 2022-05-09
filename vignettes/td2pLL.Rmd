@@ -36,14 +36,14 @@ ED_{50} =\Delta \cdot t^{-\gamma} + C_0 .
 \]
 
 
-For cytotoxicity data, dose is likely a concentrations and time is likely an exposure duration.
+For cytotoxicity data, dose is likely a concentration and time is likely an exposure duration.
 
 ## Installation
 
 
 ```{r setup}
 # install.packages("devtools")
-# devtools::install_github("jcduda/td2pLL")
+# devtools::install_github("jcduda/td2pLL", build_vignettes = TRUE)
 library(td2pLL)
 ```
 
